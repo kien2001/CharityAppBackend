@@ -1,0 +1,30 @@
+version: '3.4'
+
+services:
+  charityappbackend:
+    image: charityappbackend:latest
+    build:
+      context: .
+      dockerfile: CharityAppBackend/Dockerfile
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    environment:
+      - ConnectionStrings__MySQLConnection=mysql://root:secret@db:3306/charity
+    volumes:
+      - ./:/charitybackendapi
+  db:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    volumes:
+      - charity-mysql-data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: charity
+
+volumes:
+  charity-mysql-data:
+
