@@ -56,5 +56,7 @@ namespace Login
         /// </summary>
         public bool IsVerified { get; set; }
 
+        public string SaltPassword { get; set; }
+
     }
 }

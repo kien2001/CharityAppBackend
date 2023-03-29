@@ -3,12 +3,13 @@ using Login;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class UserController : ControllerBase
     {
 
@@ -29,7 +30,7 @@ namespace Controllers
             //{
             //    return NotFound();
             //}
-
+            var user = GetCurrentUser();
             return Ok("Aioiqwf");
         }
 
@@ -83,6 +84,24 @@ namespace Controllers
             //await db.ExecuteAsync(sql, new { Id = id });
 
             return NoContent();
+        }
+
+
+        private User? GetCurrentUser()
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+
+            if (identity != null)
+            {
+                var userClaims = identity.Claims;
+                return new User
+                {
+                    UserName = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.NameIdentifier)?.Value,
+                    Id = int.Parse(userClaims.FirstOrDefault(o => o.Type == "id")?.Value),
+                    RoleName = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Role)?.Value
+                };
+            }
+            return null;
         }
     }
 }

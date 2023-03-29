@@ -31,29 +31,38 @@ namespace CharityAppBL.Login
             try
             {
                 var userLogin = _dlLogin.GetUserByUsrNameOrId(user.UserName);
-                if (userLogin == null || !VerifyPasswordHash(user.Password, userLogin.Password))
+                if (userLogin == null || !VerifyPasswordHash(user.Password, userLogin.Password, userLogin.SaltPassword))
                 {
                     result.BadRequest(new List<string> { "Tên đăng nhập hoặc mật khẩu sai, vui lòng thử lại" });
+                    return result;
                 }
-                AuthResult tokenStr = GenerateToken(userLogin);
+                string tokenStr = GenerateToken(userLogin);
                 result.Ok(tokenStr);
+                return result;
 
             }
             catch (Exception e)
             {
                 result.InternalServer(new List<string> { e.Message });
+                return result;
+
             }
-            return result;
         }
 
-        private bool VerifyPasswordHash(string password, string hashPassword)
+        private bool VerifyPasswordHash(string password, string hashPassword, string saltPassword)
         {
-            using (var hmac = new System.Security.Cryptography.HMACSHA512())
+            var saltPasswordBytes = Encoding.UTF8.GetBytes(saltPassword);
+            var hashPasswordBytes = Convert.FromBase64String(hashPassword);
+            using (var hmac = new System.Security.Cryptography.HMACSHA512(saltPasswordBytes))
             {
-                var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
-                for (int i = 0; i < computedHash.Length; i++)
+                var computedHashBytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+                if (computedHashBytes == null || hashPasswordBytes == null || computedHashBytes.Length != hashPasswordBytes.Length)
                 {
-                    if (computedHash[i] != hashPassword[i])
+                    return false;
+                }
+                for (int i = 0; i < computedHashBytes.Length; i++)
+                {
+                    if (computedHashBytes[i] != hashPasswordBytes[i])
                     {
                         return false;
                     }
@@ -62,7 +71,7 @@ namespace CharityAppBL.Login
             }
         }
 
-        private AuthResult GenerateToken(User user)
+        private string GenerateToken(User user)
         {
 
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(DatabaseContext.ConfigJwt["Key"]));
@@ -78,28 +87,19 @@ namespace CharityAppBL.Login
             var token = new JwtSecurityToken(DatabaseContext.ConfigJwt["Issuer"],
               DatabaseContext.ConfigJwt["Audience"],
               claims,
-              expires: DateTime.UtcNow.AddSeconds(60),
+              expires: DateTime.Now.AddDays(1).Date,
               signingCredentials: credentials);
             var refreshToken = new RefreshToken()
             {
                 JwtId = token.Id,
                 UserId = user.Id,
-                IsRevoked = false,
-                IsUsed = false,
-                CreatedDate = DateTime.UtcNow,
-                ExpiredDate = DateTime.UtcNow.AddMonths(6),
-                Token = RandomString(35) + Guid.NewGuid()
+                CreatedDate = DateTime.Now,
+                ExpiredDate = DateTime.Now.AddDays(1).Date // 12h
             };
 
             int _result = _dlLogin.SaveToken(refreshToken);
 
-            return new AuthResult
-            {
-                Token = new JwtSecurityTokenHandler().WriteToken(token),
-                RefreshToken = refreshToken.Token
-            };
-
-
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
         private string RandomString(int length)
@@ -121,8 +121,8 @@ namespace CharityAppBL.Login
                 return result;
             }
 
-
-            user.Password = CreatePasswordHash(user.Password);
+            user.SaltPassword = GenerateSalt();
+            user.Password = CreatePasswordHash(user.Password, user.SaltPassword);
             try
             {
                 var _result = _dlLogin.CreateUser(user);
@@ -184,18 +184,6 @@ namespace CharityAppBL.Login
                 {
                     throw new Exception("Token does not exist");
                 }
-                if (storedToken.IsUsed)
-                {
-                    throw new Exception("Token has been used");
-
-                }
-
-                if(storedToken.IsRevoked)
-                {
-                    throw new Exception("Token has been revoked");
-
-                }
-
                 var jti = tokenVerification.Claims.FirstOrDefault(x=>x.Type == JwtRegisteredClaimNames.Jti).Value;
 
                 if(storedToken.JwtId != jti)
@@ -203,22 +191,6 @@ namespace CharityAppBL.Login
                     throw new Exception("Token does not match");
 
                 }
-
-                // update current token
-                storedToken.IsUsed = true;
-
-                var columnsUpdate = new Dictionary<string, string>()
-                {
-                    { "IsUsed" , "1" }
-                };
-
-                var whereCondition = new Dictionary<string, OperatorWhere>()
-                {
-                    { "Id" , new OperatorWhere { Operator = 0, Value = storedToken.Id } }
-                };
-
-                int _result = _dlLogin.UpdateRefreshToken(columnsUpdate, whereCondition);
-
 
                 var user = _dlLogin.GetUserByUsrNameOrId(storedToken.UserId);
                 if (user != null)
@@ -239,11 +211,18 @@ namespace CharityAppBL.Login
             }
         }
 
-        private DateTime UnixTimeStampToDateTime(long unixTimeStamp)
+        private static DateTime UnixTimeStampToDateTime(long unixTimeStamp)
         {
             var dateTimeVal = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
             dateTimeVal.AddSeconds(unixTimeStamp);
             return dateTimeVal.ToLocalTime();
+        }
+
+        private static double TransformDateTime()
+        {
+            DateTime currentDateVi = DateTime.UtcNow.AddHours(7);
+            DateTime nextDateVi = DateTime.UtcNow.AddDays(1).Date;
+            return nextDateVi.Subtract(currentDateVi).TotalSeconds;
         }
     }
 }

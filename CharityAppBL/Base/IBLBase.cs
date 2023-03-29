@@ -8,6 +8,9 @@ namespace Base
 {
     public interface IBLBase
     {
-        public string CreatePasswordHash(string password);
+        public string CreatePasswordHash(string password, string salt);
+
+        public string GenerateSalt(int length = 16);
+
     }
 }

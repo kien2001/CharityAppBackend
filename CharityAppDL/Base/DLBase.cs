@@ -14,10 +14,17 @@ namespace Base
     {
         public int Insert<T>(T entity, string tableName, List<string>? excludeColumns = null) where T : BaseEntity
         {
-            excludeColumns ??= new List<string>() { "Id" };
+            if(excludeColumns == null)
+            {
+                excludeColumns = new List<string>() { "Id"};
+            }
+            else
+            {
+                excludeColumns.Add("Id");
+            }
             using MySqlConnection mySqlConnection = new(DatabaseContext.ConnectionString);
             mySqlConnection.Open();
-            MySqlTransaction mySqlTransaction = mySqlConnection.BeginTransaction();
+            using MySqlTransaction mySqlTransaction = mySqlConnection.BeginTransaction();
             try
             {
                 string query = $"Insert into {tableName}";
@@ -30,7 +37,7 @@ namespace Base
                 {
                     dynamicParameters.Add($"@{prop.Name}", prop.GetValue(entity));
                 }
-                var result = mySqlConnection.Execute(query, dynamicParameters);
+                var result = mySqlConnection.Execute(query, dynamicParameters, mySqlTransaction);
                 mySqlTransaction.Commit();
                 return result;
 
@@ -52,7 +59,7 @@ namespace Base
 
             using MySqlConnection mySqlConnection = new(DatabaseContext.ConnectionString);
             mySqlConnection.Open();
-            MySqlTransaction mySqlTransaction = mySqlConnection.BeginTransaction();
+            using MySqlTransaction mySqlTransaction = mySqlConnection.BeginTransaction();
             try
             {
                 string query = $"Update {tableName} set ";
@@ -77,7 +84,7 @@ namespace Base
                 {
                     dynamicParameters.Add($"@{column.Key}", column.Value);
                 }
-                var result = mySqlConnection.Execute(query, dynamicParameters);
+                var result = mySqlConnection.Execute(query, dynamicParameters, mySqlTransaction);
                 mySqlTransaction.Commit();
                 return result;
             }
