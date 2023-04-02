@@ -21,4 +21,5 @@ RUN dotnet publish "CharityAppBackend.csproj" -c Release -o /app/publish /p:UseA
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
 ENTRYPOINT ["dotnet", "CharityAppBackend.dll"]

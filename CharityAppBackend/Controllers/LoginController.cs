@@ -28,14 +28,6 @@ namespace Controllers
             return Ok(result);
         }
 
-        [HttpPost("register")]
-        [AllowAnonymous]
-        public IActionResult Register([FromBody] UserRegister user)
-        {
-            ReturnResult returnResult = _blLogin.Register(user);
-            return Ok(returnResult);
-        }
-
         [HttpPost]
         [Route("refreshtoken")]
         public IActionResult RefreshToken([FromBody] TokenRequest tokenRequest)

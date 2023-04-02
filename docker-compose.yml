@@ -11,7 +11,7 @@ services:
     depends_on:
       - db
     environment:
-      - ConnectionStrings__MySQLConnection=mysql://root:secret@db:3306/charity
+      - ConnectionStrings__MySQLConnection= Server = db; Port= 3306; Database = charity; Uid = root; Pwd = secret;
     volumes:
       - ./:/charitybackendapi
   db:
