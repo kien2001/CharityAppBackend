@@ -1,3 +1,4 @@
+using CharityAppBackend.Controllers;
 using CharityAppBL.Login;
 using CharityBackendDL;
 using Login;
@@ -31,9 +32,10 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
                       policy =>
                       {
-                          policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+                          policy.WithOrigins("*").AllowAnyHeader().AllowAnyMethod();
                       });
 });
+
 
 builder.Services.AddRazorPages();
 builder.Services.AddControllers();
@@ -113,20 +115,21 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseCors(MyAllowSpecificOrigins);
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllers();
-    endpoints.MapRazorPages();
-}
+//app.UseEndpoints(endpoints =>
+//{
+//    endpoints.MapControllers();
+//    endpoints.MapRazorPages();
+//}
 
-);
-app.UseCors(MyAllowSpecificOrigins);
+//);
+//app.UseCorsMiddleware();
 
 app.MapControllers();
 

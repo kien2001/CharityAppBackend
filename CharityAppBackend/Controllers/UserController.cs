@@ -9,7 +9,7 @@ namespace Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class UserController : ControllerBase
     {
 
@@ -30,7 +30,7 @@ namespace Controllers
             //{
             //    return NotFound();
             //}
-            var user = GetCurrentUser();
+            //var user = GetCurrentUser();
             return Ok("Aioiqwf");
         }
 
