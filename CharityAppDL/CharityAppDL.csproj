@@ -14,8 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\CharityUtil\CharityUtil.csproj" />
     <ProjectReference Include="..\CharityAppBO\CharityAppBO.csproj" />
+    <ProjectReference Include="..\CharityUtil\CharityUtil.csproj" />
   </ItemGroup>
 
 </Project>

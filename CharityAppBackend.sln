@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CharityAppBO", "CharityAppB
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{F23014A6-159D-4EA6-8D59-3F674CD07DB6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CharityUtil", "..\CharityUtil\CharityUtil.csproj", "{4EEC1A99-394F-45C5-BE72-1F6BF4328FF2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CharityUtil", "CharityUtil\CharityUtil.csproj", "{9E9A4FDA-C692-4EAB-9E60-6674D6310792}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,10 +41,10 @@ Global
 		{F23014A6-159D-4EA6-8D59-3F674CD07DB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F23014A6-159D-4EA6-8D59-3F674CD07DB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F23014A6-159D-4EA6-8D59-3F674CD07DB6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4EEC1A99-394F-45C5-BE72-1F6BF4328FF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4EEC1A99-394F-45C5-BE72-1F6BF4328FF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4EEC1A99-394F-45C5-BE72-1F6BF4328FF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4EEC1A99-394F-45C5-BE72-1F6BF4328FF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E9A4FDA-C692-4EAB-9E60-6674D6310792}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E9A4FDA-C692-4EAB-9E60-6674D6310792}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E9A4FDA-C692-4EAB-9E60-6674D6310792}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E9A4FDA-C692-4EAB-9E60-6674D6310792}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
