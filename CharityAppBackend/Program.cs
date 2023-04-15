@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -21,6 +22,7 @@ using System.Net.Mime;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Validation;
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
@@ -46,6 +48,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IBLLogin, BLLogin>();
 builder.Services.AddScoped<IDLLogin, DLLogin>();
+builder.Services.AddScoped<JwtTokenValidator>();
 
 builder.Services.AddControllers().ConfigureApiBehaviorOptions(options =>
 {
@@ -98,9 +101,18 @@ builder.Services.AddAuthentication(options =>
     {
         jwt.SaveToken = true;
         jwt.TokenValidationParameters = tokenValidationParameters;
-
+        jwt.SecurityTokenValidators.Clear(); // Clear default token validators
+        jwt.SecurityTokenValidators.Add(new JwtTokenValidator(
+            builder.Services.BuildServiceProvider().GetRequiredService<IDistributedCache>(),
+            builder.Services.BuildServiceProvider().GetRequiredService<IDLLogin>()
+        ));
     });
 builder.Services.AddSingleton(tokenValidationParameters);
+
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration.GetSection("CacheSettings").GetValue<string>("ConnectionString");
+});
 
 DatabaseContext.ConnectionString = builder.Configuration.GetConnectionString("MySQLConnection");
 DatabaseContext.ConfigJwt = builder.Configuration.GetSection("Jwt");

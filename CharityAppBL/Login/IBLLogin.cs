@@ -15,7 +15,7 @@ namespace CharityAppBL.Login
 
         public ReturnResult Register(UserRegister user);
 
-        public ReturnResult VerifyToken(TokenRequest tokenRequest);
+        //public ReturnResult VerifyToken(TokenRequest tokenRequest);
 
     }
 }

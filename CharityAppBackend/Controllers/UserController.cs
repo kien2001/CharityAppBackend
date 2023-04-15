@@ -9,35 +9,41 @@ namespace Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class UserController : ControllerBase
     {
 
         private readonly IBLLogin _iBLLogin;
+        private readonly IDLLogin _dlLogin;
 
-        public UserController(IBLLogin bLLogin)
+
+        public UserController(IBLLogin bLLogin, IDLLogin dLLogin)
         {
             _iBLLogin = bLLogin;
+            _dlLogin = dLLogin;
+
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUserById(int id)
+        public IActionResult GetUserById(int id)
         {
-            //using IDbConnection db = new MySqlConnection(_connectionString);
-            //var user = await db.QuerySingleOrDefaultAsync<User>("SELECT * FROM Users WHERE Id = @Id", new { Id = id });
-
-            //if (user == null)
-            //{
-            //    return NotFound();
-            //}
-            //var user = GetCurrentUser();
-            return Ok("Aioiqwf");
+            if (User.Identity is ClaimsIdentity identity)
+            {
+                var userClaims = identity.Claims;
+                return Ok(new User
+                {
+                    UserName = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Name)?.Value ?? "",
+                    Id = int.Parse(userClaims.FirstOrDefault(o => o.Type == ClaimTypes.NameIdentifier)?.Value),
+                    RoleName = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Role)?.Value ?? ""
+                });
+            }
+            var storedToken = _dlLogin.GetToken(id);
+            return Ok(storedToken);
         }
 
         [HttpPost]
         public async Task<ActionResult<User>> CreateUser(User user)
         {
-            //using IDbConnection db = new MySqlConnection(_connectionString);
             //var sql = @"INSERT INTO Users (Name, Email, Password) VALUES (@Name, @Email, @Password);
             //            SELECT LAST_INSERT_ID();";
 

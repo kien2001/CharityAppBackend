@@ -28,21 +28,29 @@ namespace Controllers
             return Ok(result);
         }
 
-        [HttpPost]
-        [Route("refreshtoken")]
-        public IActionResult RefreshToken([FromBody] TokenRequest tokenRequest)
-        {
-            ReturnResult returnResult = _blLogin.VerifyToken(tokenRequest);
+        //[HttpPost]
+        //[Authorize]
+        //public IActionResult Logout()
+        //{
 
-            if (returnResult.IsSuccess)
-            {
-                return Ok(returnResult);
-            }else if(!returnResult.IsAuthorized)
-            {
-                return Unauthorized(returnResult);
-            }
-            return BadRequest(returnResult);
-        }
+        //    return Ok();
+        //}
+
+        //[HttpPost]
+        //[Route("refreshtoken")]
+        //public IActionResult RefreshToken([FromBody] TokenRequest tokenRequest)
+        //{
+        //    ReturnResult returnResult = _blLogin.VerifyToken(tokenRequest);
+
+        //    if (returnResult.IsSuccess)
+        //    {
+        //        return Ok(returnResult);
+        //    }else if(!returnResult.IsAuthorized)
+        //    {
+        //        return Unauthorized(returnResult);
+        //    }
+        //    return BadRequest(returnResult);
+        //}
 
     }
 }

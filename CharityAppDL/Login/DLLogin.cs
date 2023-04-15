@@ -7,12 +7,20 @@ using Auth;
 using Base;
 using CharityBackendDL;
 using Dapper;
+using Microsoft.Extensions.Caching.Distributed;
 using MySqlConnector;
+using Newtonsoft.Json;
 
 namespace Login
 {
     public class DLLogin : DLBase, IDLLogin
     {
+        private readonly IDistributedCache _redisCache;
+        public DLLogin(IDistributedCache distributedCache)
+        {
+            _redisCache = distributedCache;
+        } 
+
         public int CreateUser(UserRegister user)
         {
             return Insert(user, "user_account", new List<string>
@@ -22,79 +30,72 @@ namespace Login
             
         }
 
-        public RefreshToken GetToken(string token)
+        public dynamic? GetUserByUsrNameOrId(string userName)
         {
-
-            using (MySqlConnection mySqlConnection = new(DatabaseContext.ConnectionString))
+            using MySqlConnection mySqlConnection = new(DatabaseContext.ConnectionString);
+            mySqlConnection.Open();
+            try
             {
+                string query = "Select * from user_account where UserName = @param limit 1;";
 
-                mySqlConnection.Open();
-                try
-                {
+                DynamicParameters dynamicParameters = new();
+                dynamicParameters.Add("@param", userName);
 
-                    string query = "Select * from refresh_token where token = @token limit 1;";
-                    DynamicParameters dynamicParameters = new();
-                    dynamicParameters.Add("@token", token);
-
-                    var _token = mySqlConnection.QueryFirstOrDefault<RefreshToken>(query, dynamicParameters);
-                    return _token;
-
-                }
-                catch (MySqlException ex)
-                {
-                    throw new Exception(ex.Message);
-                }
-                finally
-                {
-                    mySqlConnection.Close();
-                }
+                dynamic _user = mySqlConnection.Query<dynamic>(query, dynamicParameters).FirstOrDefault();
+                return _user ?? null;
             }
-                
-        }
-
-        public User GetUserByUsrNameOrId(object param)
-        {
-            using (MySqlConnection mySqlConnection = new(DatabaseContext.ConnectionString))
+            catch (MySqlException ex)
             {
-                mySqlConnection.Open();
-                try
-                {
-                    string query = "Select * from user_account where {0} = @param limit 1;";
-
-                    if (param is string)
-                    {
-                        query = string.Format(query, "UserName");
-                    }else if(param is int)
-                    {
-                        query = string.Format(query, "Id");
-                    }
-
-                    DynamicParameters dynamicParameters = new();
-                    dynamicParameters.Add("@param", param);
-
-                    User userLogin = mySqlConnection.QueryFirstOrDefault<User>(query, dynamicParameters);
-                    return userLogin;
-                }
-                catch (MySqlException ex)
-                {
-                    throw new Exception(ex.Message);
-                }
-                finally
-                {
-                    mySqlConnection.Close();
-                }
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                mySqlConnection.Close();
             }
         }
 
-        public User GetUserByUserName(int id)
+        /// <summary>
+        /// Luu token vao cache
+        /// </summary>
+        /// <param name="refreshToken"></param>
+        /// <exception cref="Exception"></exception>
+        public void SaveToken(RefreshToken refreshToken)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var cacheEntryOptions = new DistributedCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromDays(1)); // Set expiration time to 1 day
+                var refreshTokenJson = JsonConvert.SerializeObject(refreshToken);
+                // Convert the JSON string to byte array
+                var refreshTokenBytes = Encoding.UTF8.GetBytes(refreshTokenJson);
+                _redisCache.Set(refreshToken.UserId.ToString(), refreshTokenBytes, cacheEntryOptions);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
-        public int SaveToken(RefreshToken refreshToken)
+        public RefreshToken? GetToken(int userId)
         {
-            return Insert(refreshToken, "refresh_token");
-          
+            try
+            {
+                // Get the cached refreshToken value from Redis
+                var refreshTokenBytes = _redisCache.Get(userId.ToString());
+
+                if (refreshTokenBytes != null)
+                {
+                    // Deserialize the refreshToken object from the cached byte array
+                    var refreshTokenJson = Encoding.UTF8.GetString(refreshTokenBytes);
+                    var refreshToken = JsonConvert.DeserializeObject<RefreshToken>(refreshTokenJson);
+                    return refreshToken;
+                }
+
+                return null; // Return null if refreshToken not found in cache
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public int UpdateRefreshToken(Dictionary<string, string> columnUpdate, Dictionary<string, OperatorWhere> whereCondition)

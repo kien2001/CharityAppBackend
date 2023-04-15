@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="Newtonsoft.Json.Schema" Version="3.0.14" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\CharityUtil\CharityUtil.csproj" />
     <ProjectReference Include="..\CharityAppBO\CharityAppBO.csproj" />
     <ProjectReference Include="..\CharityAppDL\CharityAppDL.csproj" />
   </ItemGroup>

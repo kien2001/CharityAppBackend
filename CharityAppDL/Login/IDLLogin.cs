@@ -10,13 +10,15 @@ namespace Login
 {
     public interface IDLLogin
     {
-        public User GetUserByUsrNameOrId(object param);
+        public dynamic? GetUserByUsrNameOrId(string userName);
 
         public int CreateUser(UserRegister user);
 
-        public int SaveToken(RefreshToken refreshToken);
+        public void SaveToken(RefreshToken refreshToken);
 
-        public RefreshToken GetToken(string token);
+        public RefreshToken GetToken(int userId);
+
+        //public RefreshToken GetToken(string token);
 
         public int UpdateRefreshToken(Dictionary<string, string> columnUpdate, Dictionary<string, OperatorWhere> whereCondition);
     }
