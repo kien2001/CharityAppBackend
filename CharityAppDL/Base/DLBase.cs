@@ -56,7 +56,6 @@ namespace Base
 
         public int Update(string tableName, Dictionary<string, string> updateColumns, Dictionary<string, OperatorWhere> whereCondition)
         {
-
             using MySqlConnection mySqlConnection = new(DatabaseContext.ConnectionString);
             mySqlConnection.Open();
             using MySqlTransaction mySqlTransaction = mySqlConnection.BeginTransaction();

@@ -24,6 +24,7 @@ namespace Controllers
 
         }
 
+
         [HttpGet("{id}")]
         public IActionResult GetUserById(int id)
         {

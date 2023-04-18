@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Login
 {
-    public class UserCharityReturn
+    public class UserCharityReturn: BaseEntity
     {
-        public string Username { get; set; }
+        public string UserName { get; set; }
         public string Email { get; set; }
         public int RoleId { get; set; }
         public string? PhoneNumber { get; set; }
@@ -31,6 +31,8 @@ namespace Login
 
         public string? CharityFile { get; set; }
 
+        public bool IsLocked { get; set; }
+
 
         //[Url]
         //public string ImageUrl { get; set; }
@@ -39,12 +41,13 @@ namespace Login
 
     }
 
-    public class UserNormalReturn
+    public class UserNormalReturn : BaseEntity
     {
-        public string Username { get; set; }
+        public string UserName { get; set; }
         public string Email { get; set; }
         public int RoleId { get; set; }
         public string? PhoneNumber { get; set; }
+        public bool IsLocked { get; set; }
 
     }
 }

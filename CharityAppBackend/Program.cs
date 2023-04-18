@@ -1,4 +1,6 @@
 using CharityAppBL.Login;
+using CharityAppBL.Setting;
+using CharityAppDL.Setting;
 using CharityBackendDL;
 using Login;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -48,6 +50,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IBLLogin, BLLogin>();
 builder.Services.AddScoped<IDLLogin, DLLogin>();
+builder.Services.AddScoped<IDLSetting, DLSetting>();
+builder.Services.AddScoped<IBLSetting, BLSetting>();
+
 builder.Services.AddScoped<JwtTokenValidator>();
 
 builder.Services.AddControllers().ConfigureApiBehaviorOptions(options =>

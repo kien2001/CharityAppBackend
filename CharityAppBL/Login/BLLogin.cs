@@ -6,12 +6,16 @@ using Login;
 using ActionResult;
 using Auth;
 using CharityBackendDL;
+using Newtonsoft.Json;
+using System.Net.Http;
+
 namespace CharityAppBL.Login
 {
     public class BLLogin : IBLLogin
     {
         private readonly IDLLogin _dlLogin;
         private readonly TokenValidationParameters _tokenValidationParameters;
+        private HttpClient _httpClient = new HttpClient();
         public BLLogin(IDLLogin dlLogin, TokenValidationParameters tokenValidationParameters)
         {
             _dlLogin = dlLogin;
@@ -32,12 +36,13 @@ namespace CharityAppBL.Login
                 var password = userLogin?.Password ?? "";
                 var saltPassword = userLogin?.SaltPassword ?? "";
 
-                if (!VerifyPasswordHash(user.Password, password, saltPassword))
+                if (!CharityUtil.VerifyPasswordHash(user.Password, password, saltPassword))
                 {
                     result.BadRequest(new List<string> { "Tên đăng nhập hoặc mật khẩu sai, vui lòng thử lại" });
                     return result;
                 }
                 var _user = CharityUtil.ConvertToType<User>(userLogin);
+
                 string tokenStr = GenerateToken(_user) ?? throw new Exception("Error when create Token");
 
                 var charityName = userLogin?.CharityName ?? "";
@@ -55,6 +60,7 @@ namespace CharityAppBL.Login
                     User = userLogin
                 };
                 result.Ok(objectResult);
+                var _result = SendTokenToAPI(objectResult);
                 return result;
             }
             catch (Exception e)
@@ -65,25 +71,20 @@ namespace CharityAppBL.Login
             }
         }
 
-        private bool VerifyPasswordHash(string password, string hashPassword, string saltPassword)
+        public async Task<object?> SendTokenToAPI(object requestData)
         {
-            var saltPasswordBytes = Encoding.UTF8.GetBytes(saltPassword);
-            var hashPasswordBytes = Convert.FromBase64String(hashPassword);
-            using (var hmac = new System.Security.Cryptography.HMACSHA512(saltPasswordBytes))
+            var content = new StringContent(JsonConvert.SerializeObject(requestData), Encoding.UTF8, "application/json");
+            HttpResponseMessage response = await _httpClient.PostAsync("http://localhost:8089/charity/access/token", content);
+            if (response.IsSuccessStatusCode)
             {
-                var computedHashBytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
-                if (computedHashBytes == null || hashPasswordBytes == null || computedHashBytes.Length != hashPasswordBytes.Length)
-                {
-                    return false;
-                }
-                for (int i = 0; i < computedHashBytes.Length; i++)
-                {
-                    if (computedHashBytes[i] != hashPasswordBytes[i])
-                    {
-                        return false;
-                    }
-                }
-                return true;
+                string responseData = await response.Content.ReadAsStringAsync();
+                // Process the response data
+                return responseData;
+            }
+            else
+            {
+                // Handle the error response
+                return null;
             }
         }
 

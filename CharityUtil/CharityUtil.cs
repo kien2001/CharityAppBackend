@@ -31,6 +31,28 @@ public static class CharityUtil
         return Convert.ToBase64String(saltBytes);
     }
 
+    public static bool VerifyPasswordHash(string password, string hashPassword, string saltPassword)
+    {
+        var saltPasswordBytes = Encoding.UTF8.GetBytes(saltPassword);
+        var hashPasswordBytes = Convert.FromBase64String(hashPassword);
+        using (var hmac = new System.Security.Cryptography.HMACSHA512(saltPasswordBytes))
+        {
+            var computedHashBytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+            if (computedHashBytes == null || hashPasswordBytes == null || computedHashBytes.Length != hashPasswordBytes.Length)
+            {
+                return false;
+            }
+            for (int i = 0; i < computedHashBytes.Length; i++)
+            {
+                if (computedHashBytes[i] != hashPasswordBytes[i])
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
     public static bool CanBeConverted<T>(object value) where T : class
     {
         var jsonData = JsonConvert.SerializeObject(value);
