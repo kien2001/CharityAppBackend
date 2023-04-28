@@ -1,4 +1,5 @@
-﻿using CharityBackendDL;
+﻿using Base;
+using CharityBackendDL;
 using Dapper;
 using MySqlConnector;
 using System;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace CharityAppDL.Setting
 {
-    public class DLSetting : IDLSetting
+    public class DLSetting : DLBase, IDLSetting
     {
         public dynamic GetPasswordById(int id)
         {
@@ -34,5 +35,12 @@ namespace CharityAppDL.Setting
                 mySqlConnection.Close();
             }
         }
+
+        public int UpdateInfo(string tableName, Dictionary<string, string> updateColumns, Dictionary<string, OperatorWhere> whereCondition)
+        {
+            return Update(tableName, updateColumns, whereCondition);
+        }
+
+
     }
 }

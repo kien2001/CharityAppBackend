@@ -11,7 +11,7 @@ namespace CharityAppBL.Setting
     public interface IBLSetting
     {
         ReturnResult CheckPassword(int id, string password);
-        ReturnResult UpdateInfo(int id, int roleId, string isUpdatePassword, object userUpdate);
+        ReturnResult UpdateInfo<T>(int id, int roleId, bool isUpdatePassword, T userUpdate) where T : class;
 
     }
 }

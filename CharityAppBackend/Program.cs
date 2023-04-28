@@ -112,6 +112,18 @@ builder.Services.AddAuthentication(options =>
             builder.Services.BuildServiceProvider().GetRequiredService<IDLLogin>()
         ));
     });
+builder.Services.AddAuthorization(options =>
+{
+    var AdminRole = Enum.GetName(typeof(RoleUser), (int)RoleUser.Admin);
+    var UserCharityRole = Enum.GetName(typeof(RoleUser), (int)RoleUser.UserCharity);
+    var UserNormalRole = Enum.GetName(typeof(RoleUser), (int)RoleUser.UserNormal);
+    if(AdminRole != null && UserCharityRole != null && UserNormalRole != null)
+    {
+        options.AddPolicy(AdminRole, policy => policy.RequireRole(AdminRole));
+        options.AddPolicy(UserCharityRole, policy => policy.RequireRole(UserCharityRole));
+        options.AddPolicy(UserNormalRole, policy => policy.RequireRole(UserNormalRole));
+    }
+});
 builder.Services.AddSingleton(tokenValidationParameters);
 
 builder.Services.AddStackExchangeRedisCache(options =>

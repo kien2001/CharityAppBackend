@@ -6,10 +6,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Login
 {
-    public class User:BaseEntity
+    public class User : BaseEntity
     {
         /// <summary>
         /// Ten dang nhap
@@ -29,7 +30,25 @@ namespace Login
         /// <summary>
         /// Ten vai tro
         /// </summary>
-        public string RoleName { get; set; } = "string";
+        public string RoleName   
+        {
+            get {
+                switch (RoleId)
+                {
+                    case (int)RoleUser.Admin:
+                        return Enum.GetName(typeof(RoleUser), (int)RoleUser.Admin);
+                    case (int)RoleUser.UserCharity:
+                        return Enum.GetName(typeof(RoleUser), (int)RoleUser.UserCharity);
+                    case (int)RoleUser.UserNormal:
+                        return Enum.GetName(typeof(RoleUser), (int)RoleUser.UserNormal);
+                    default:
+                        return "";
+                }
+            }
+            set { 
+                RoleName = value;
+            }
+        }
 
         /// <summary>
         /// Dia chi

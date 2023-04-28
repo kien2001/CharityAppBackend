@@ -11,7 +11,7 @@ namespace Base
     {
         public Operator Operator { get; set; }
 
-        public object Value { get; set; }
+        public string Value { get; set; }
     }
 
     public interface IDLBase

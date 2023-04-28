@@ -68,7 +68,7 @@ namespace Base
                     string field = $"{column.Key} = @{column.Key}";
                     columnUpdate.Add(field);
                 }
-                string columnStr = string.Join(" And ", columnUpdate);
+                string columnStr = string.Join(", ", columnUpdate);
                 string whereConditionStr = BuidWhereQuery(whereCondition);
 
                 if (!string.IsNullOrEmpty(whereConditionStr))
