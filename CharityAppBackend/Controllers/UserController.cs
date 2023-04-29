@@ -3,6 +3,9 @@ using Login;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
+using Swashbuckle.Swagger.Annotations;
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 
 namespace Controllers
@@ -25,7 +28,25 @@ namespace Controllers
         }
 
 
+        /// <summary>
+        /// Get a specific User with ID.
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     POST /Todo
+        ///     {
+        ///        "id": 1,
+        ///        "name": "Item #1",
+        ///        "isComplete": true
+        ///     }
+        ///
+        /// </remarks>
+        /// <response code="201">Returns the newly created item</response>
+        /// <response code="400">If the item is null</response>
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult GetUserById(int id)
         {
             if (User.Identity is ClaimsIdentity identity)
@@ -35,7 +56,7 @@ namespace Controllers
                 {
                     UserName = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Name)?.Value ?? "",
                     Id = int.Parse(userClaims.FirstOrDefault(o => o.Type == ClaimTypes.NameIdentifier)?.Value),
-                    RoleName = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Role)?.Value ?? ""
+                    RoleId = int.Parse(userClaims.FirstOrDefault(o => o.Type == "RoleId")?.Value)
                 });
             }
             var storedToken = _dlLogin.GetToken(id);

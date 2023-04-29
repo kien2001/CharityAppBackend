@@ -1,5 +1,4 @@
-﻿using Base;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -10,8 +9,10 @@ using System.Xml.Linq;
 
 namespace Login
 {
-    public class User : BaseEntity
+    public class User 
     {
+        public int Id { get; set; }
+
         /// <summary>
         /// Ten dang nhap
         /// </summary>
@@ -30,23 +31,17 @@ namespace Login
         /// <summary>
         /// Ten vai tro
         /// </summary>
-        public string RoleName   
+        public string RoleName
         {
-            get {
-                switch (RoleId)
-                {
-                    case (int)RoleUser.Admin:
-                        return Enum.GetName(typeof(RoleUser), (int)RoleUser.Admin);
-                    case (int)RoleUser.UserCharity:
-                        return Enum.GetName(typeof(RoleUser), (int)RoleUser.UserCharity);
-                    case (int)RoleUser.UserNormal:
-                        return Enum.GetName(typeof(RoleUser), (int)RoleUser.UserNormal);
-                    default:
-                        return "";
-                }
-            }
-            set { 
-                RoleName = value;
+            get => RoleId switch
+            {
+                (int)RoleUser.Admin => Enum.GetName(typeof(RoleUser), (int)RoleUser.Admin) ?? "",
+                (int)RoleUser.UserCharity => Enum.GetName(typeof(RoleUser), (int)RoleUser.UserCharity) ?? "",
+                (int)RoleUser.UserNormal => Enum.GetName(typeof(RoleUser), (int)RoleUser.UserNormal) ?? "",
+                _ => "",
+            };
+            set
+            {
             }
         }
 

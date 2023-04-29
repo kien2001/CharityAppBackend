@@ -1,5 +1,4 @@
-﻿using Base;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Login
 {
-    public class UserLogin:BaseEntity
+    public class UserLogin
     {
         public string UserName { get; set; }
 

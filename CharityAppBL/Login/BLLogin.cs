@@ -98,20 +98,21 @@ namespace CharityAppBL.Login
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Role, user.RoleName),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim("RoleId", user.RoleId.ToString())
             };
             var identity = new ClaimsIdentity(claims, "JWT");
             var token = new JwtSecurityToken(DatabaseContext.ConfigJwt["Issuer"],
               DatabaseContext.ConfigJwt["Audience"],
               identity.Claims,
-              expires: DateTime.Now.AddDays(1).Date,
+              expires: DateTime.Now.AddDays(1),
               signingCredentials: credentials);
             var refreshToken = new RefreshToken()
             {
                 JwtId = token.Id,
                 UserId = user.Id,
-                CreatedDate = DateTime.UtcNow.AddHours(7), // GMT 7
-                ExpiredDate = DateTime.UtcNow.AddHours(7).AddDays(1).Date // 12h
+                CreatedDate = DateTime.UtcNow, 
+                ExpiredDate = DateTime.UtcNow.AddDays(1) 
             };
 
             _dlLogin.SaveToken(refreshToken);

@@ -16,7 +16,7 @@ namespace Base
 
     public interface IDLBase
     {
-        public int Insert<T>(T entity, string tableName, List<string> excludeColumns) where T : BaseEntity;
+        public int Insert<T>(T entity, string tableName, List<string> excludeColumns) where T : class;
 
         public int Update(string tableName, Dictionary<string, string> updateColumns, Dictionary<string, OperatorWhere> whereCondition);
 

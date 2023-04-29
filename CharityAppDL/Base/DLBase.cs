@@ -12,7 +12,7 @@ namespace Base
 {
     public class DLBase : IDLBase
     {
-        public int Insert<T>(T entity, string tableName, List<string>? excludeColumns = null) where T : BaseEntity
+        public int Insert<T>(T entity, string tableName, List<string>? excludeColumns = null) where T : class
         {
             if(excludeColumns == null)
             {
