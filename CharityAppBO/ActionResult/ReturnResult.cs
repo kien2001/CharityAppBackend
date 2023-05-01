@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,7 +15,21 @@ namespace ActionResult
 
         public List<string>? Messages { get; set; }
 
-        public int? Total { get; set; }
+        public int Total
+        {
+            get
+            {
+                if(Data != null && Data is ICollection)
+                {
+                    if (Data is ICollection _Data)
+                    {
+                        return _Data.Count;
+                    }
+                }
+                return 0;
+            }
+            set { }
+        }
 
         public bool IsSuccess { get; set; } = true;
 

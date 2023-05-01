@@ -1,4 +1,6 @@
 ﻿using CharityAppBL.Login;
+using CharityAppBL.Users;
+using CharityAppBO.Users;
 using Login;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -10,21 +12,18 @@ using System.Security.Claims;
 
 namespace Controllers
 {
-    [Route("api/[controller]")]
+    [Route("user")]
     [ApiController]
     [Authorize]
     public class UserController : ControllerBase
     {
 
-        private readonly IBLLogin _iBLLogin;
-        private readonly IDLLogin _dlLogin;
+        private readonly IBLUser _bLUser;
 
 
-        public UserController(IBLLogin bLLogin, IDLLogin dLLogin)
+        public UserController(IBLUser bLUser)
         {
-            _iBLLogin = bLLogin;
-            _dlLogin = dLLogin;
-
+            _bLUser = bLUser;
         }
 
 
@@ -34,46 +33,89 @@ namespace Controllers
         /// <remarks>
         /// Sample request:
         ///
-        ///     POST /Todo
+        ///     Get http://localhost:8080/user/current-user
         ///     {
-        ///        "id": 1,
-        ///        "name": "Item #1",
-        ///        "isComplete": true
+        ///        
         ///     }
         ///
         /// </remarks>
-        /// <response code="201">Returns the newly created item</response>
-        /// <response code="400">If the item is null</response>
-        [HttpGet("{id}")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        /// <response code="200">Returns user with specific id</response>
+        /// <response code="403">User does not have permission</response>
+        /// <response code="400">If the user is null</response>
+        [HttpGet("current-user")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult GetUserById(int id)
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        public IActionResult GetCurrentUser()
         {
-            if (User.Identity is ClaimsIdentity identity)
+            var id = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var result = _bLUser.GetUser(id);
+            if(result.IsSuccess)
             {
-                var userClaims = identity.Claims;
-                return Ok(new User
-                {
-                    UserName = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Name)?.Value ?? "",
-                    Id = int.Parse(userClaims.FirstOrDefault(o => o.Type == ClaimTypes.NameIdentifier)?.Value),
-                    RoleId = int.Parse(userClaims.FirstOrDefault(o => o.Type == "RoleId")?.Value)
-                });
+                return Ok(result);
             }
-            var storedToken = _dlLogin.GetToken(id);
-            return Ok(storedToken);
+            return BadRequest(result);
         }
 
-        [HttpPost]
-        public async Task<ActionResult<User>> CreateUser(User user)
+        /// <summary>
+        /// Get all users(only Admin role).
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     Get http://localhost:8080/user/all
+        ///     {
+        ///        
+        ///     }
+        ///
+        /// </remarks>
+        /// <response code="200">Returns all users</response>
+        /// <response code="400">If no user</response>
+        /// <response code="403">User does not have permission</response>
+        [HttpGet("all")]
+        [Authorize(Roles = "Admin")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        public IActionResult GetAllUser()
         {
-            //var sql = @"INSERT INTO Users (Name, Email, Password) VALUES (@Name, @Email, @Password);
-            //            SELECT LAST_INSERT_ID();";
+            var result = _bLUser.GetAllUser();
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
 
-            //var id = await db.ExecuteScalarAsync<int>(sql, user);
-
-            //user.Id = id;
-
-            return CreatedAtAction("oke", 1);
+        /// <summary>
+        /// Change status User (lock or not).
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     Post http://localhost:8080/user/change-status
+        ///     {
+        ///        id: 1,
+        ///        status: true
+        ///     }
+        ///
+        /// </remarks>
+        /// <response code="200">Returns 1</response>
+        /// <response code="400">If can not update</response>
+        /// <response code="403">User does not have permission</response>
+        [HttpPost("change-status")]
+        [Authorize(Roles = "Admin")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        public IActionResult ChangeStatus(UpdateStatusUser updateStatusUser)
+        {
+            var result = _bLUser.ChangeStatus(updateStatusUser);
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
 
         [HttpPut("{id}")]
@@ -115,7 +157,7 @@ namespace Controllers
         }
 
 
-        private User? GetCurrentUser()
+        private User? GetCurrentUser1()
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;
 

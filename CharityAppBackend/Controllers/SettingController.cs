@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CharityAppBackend.Controllers
 {
-    [Route("[controller]")]
+    [Route("setting")]
     [Authorize]
     [ApiController]
     public class SettingController : ControllerBase

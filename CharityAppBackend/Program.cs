@@ -1,6 +1,8 @@
 using CharityAppBL.Login;
 using CharityAppBL.Setting;
+using CharityAppBL.Users;
 using CharityAppDL.Setting;
+using CharityAppDL.User;
 using CharityBackendDL;
 using Login;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -77,6 +79,8 @@ builder.Services.AddScoped<IBLLogin, BLLogin>();
 builder.Services.AddScoped<IDLLogin, DLLogin>();
 builder.Services.AddScoped<IDLSetting, DLSetting>();
 builder.Services.AddScoped<IBLSetting, BLSetting>();
+builder.Services.AddScoped<IBLUser, BLUser>();
+builder.Services.AddScoped<IDLUser, DLUser>();
 
 builder.Services.AddScoped<JwtTokenValidator>();
 

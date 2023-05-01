@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CharityAppBackend.Controllers
 {
-    [Route("[controller]")]
+    [Route("register")]
     [ApiController]
     public class RegisterController : ControllerBase
     {
