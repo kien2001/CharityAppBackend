@@ -7,33 +7,22 @@ using System.Threading.Tasks;
 
 namespace CharityAppBO.Setting
 {
-    public class UserNormalUpdate
+    public class UpdatePassword
     {
-        public string Avatar { get; set; }
-
         [Required]
-        [EmailAddress]
-        public string Email { get; set; }
-
-        [RegularExpression(@"(84|0[3|5|7|8|9])+([0-9]{8})\b", ErrorMessage = "Invalid Phone Number!")]
-        public string PhoneNumber { get; set; }
-
-        //[Url]
-        //public string ImageUrl { get; set; }
-
-        //public bool IsVerified { get; set; }
-
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 6)]
         [DataType(DataType.Password)]
-        public string? OldPassword { get; set; }
+        public string OldPassword { get; set; }
 
+        [Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 6)]
         [DataType(DataType.Password)]
         [Different("OldPassword", ErrorMessage = "The new password and old password must be different.")]
-        public string? NewPassword { get; set; }
+        public string NewPassword { get; set; }
 
+        [Required]
         [DataType(DataType.Password)]
         [Compare("NewPassword", ErrorMessage = "The password and confirmation password do not match.")]
-        public string? ConfirmNewPassword { get; set; }
+        public string ConfirmNewPassword { get; set; }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using Base;
 using CharityBackendDL;
 using Dapper;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Configuration;
 using MySqlConnector;
 using System;
 using System.Collections.Generic;
@@ -12,6 +14,10 @@ namespace CharityAppDL.Setting
 {
     public class DLSetting : DLBase, IDLSetting
     {
+        public DLSetting(IDistributedCache distributedCache, IConfiguration configuration) : base(distributedCache, configuration)
+        {
+        }
+
         public dynamic GetPasswordById(int id)
         {
             using MySqlConnection mySqlConnection = new(DatabaseContext.ConnectionString);
@@ -41,6 +47,31 @@ namespace CharityAppDL.Setting
             return Update(tableName, updateColumns, whereCondition);
         }
 
+        
+        public int UpdateCharityPassword(int id, string newPassword)
+        {
+            using MySqlConnection mySqlConnection = new(DatabaseContext.ConnectionString);
+            mySqlConnection.Open();
+            try
+            {
+                string query = "update user_account set Password = @Password where Id = @Id;";
+
+                DynamicParameters dynamicParameters = new();
+                dynamicParameters.Add("@Id", id);
+                dynamicParameters.Add("@Password", newPassword);
+
+                int result = mySqlConnection.Execute(query, dynamicParameters);
+                return result;
+            }
+            catch (MySqlException ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                mySqlConnection.Close();
+            }
+        }
 
     }
 }

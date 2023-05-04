@@ -1,7 +1,14 @@
-﻿using CharityAppBO;
+﻿using Auth;
+using CharityAppBO;
 using CharityBackendDL;
 using Dapper;
+using Firebase.Auth;
+using Firebase.Storage;
+using Login;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Configuration;
 using MySqlConnector;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +19,45 @@ namespace Base
 {
     public class DLBase : IDLBase
     {
+        private readonly IDistributedCache _redisCache;
+        private string ApiKey;
+        private string Bucket;
+        private string AuthEmail;
+        private string AuthPassword;
+       
+        public DLBase(IDistributedCache distributedCache, IConfiguration configuration)
+        {
+            _redisCache = distributedCache;
+            ApiKey = configuration.GetSection("FirebaseSettings").GetValue<string>("ApiKey");
+            Bucket = configuration.GetSection("FirebaseSettings").GetValue<string>("Bucket");
+            AuthEmail = configuration.GetSection("FirebaseSettings").GetValue<string>("AuthEmail");
+            AuthPassword = configuration.GetSection("FirebaseSettings").GetValue<string>("AuthPassword");
+
+        }
+
+        public T? GetDataRedis<T>(string key) where T : class
+        {
+            try
+            {
+                // Get the cached refreshToken value from Redis
+                var dataBytes = _redisCache.Get(key);
+
+                if (dataBytes != null)
+                {
+                    // Deserialize the refreshToken object from the cached byte array
+                    var dataJson = Encoding.UTF8.GetString(dataBytes);
+                    var data = JsonConvert.DeserializeObject<T>(dataJson);
+                    return data;
+                }
+
+                return null; // Return null if refreshToken not found in cache
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         public int Insert<T>(T entity, string tableName, List<string>? excludeColumns = null) where T : class
         {
             if(excludeColumns == null)
@@ -53,6 +99,24 @@ namespace Base
             }
         }
 
+        public void SaveDataRedis(string key, object data, DistributedCacheEntryOptions? distributedCacheEntryOptions)
+        {
+            try
+            {
+                if(distributedCacheEntryOptions == null)
+                {
+                    distributedCacheEntryOptions = new DistributedCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromDays(1)); // Set expiration time to 1 day
+                }
+                var serializedData = JsonConvert.SerializeObject(data);
+                // Convert the JSON string to byte array
+                var dataBytes = Encoding.UTF8.GetBytes(serializedData);
+                _redisCache.Set(key, dataBytes, distributedCacheEntryOptions);
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
 
         public int Update(string tableName, Dictionary<string, string> updateColumns, Dictionary<string, OperatorWhere> whereCondition)
         {
@@ -97,7 +161,42 @@ namespace Base
                 mySqlConnection.Close();
             }
         }
-           
+
+        public async Task<string> UploadFileFirebase(MemoryStream memoryStream, string fileName)
+        {
+            using var stream = new MemoryStream();
+            await memoryStream.CopyToAsync(stream);
+            stream.Position = 0;
+
+            var auth = new FirebaseAuthProvider(new FirebaseConfig(ApiKey));
+            var a = await auth.SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword);
+
+            // you can use CancellationTokenSource to cancel the upload midway
+            var cancellation = new CancellationTokenSource();
+
+            var task = new FirebaseStorage(
+                Bucket,
+                new FirebaseStorageOptions
+                {
+                    AuthTokenAsyncFactory = () => Task.FromResult(a.FirebaseToken),
+                    ThrowOnCancel = true // when you cancel the upload, exception is thrown. By default no exception is thrown
+                })
+                .Child("avatar")
+                .Child(fileName)
+                .PutAsync(stream, cancellation.Token);
+
+            string downloadUrl = "";
+            try
+            {
+                downloadUrl = await task;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            return downloadUrl;
+        }
+
         private string BuidWhereQuery(Dictionary<string, OperatorWhere> whereCondition)
         {
             var whereQuery = new List<string>();

@@ -8,6 +8,7 @@ using Base;
 using CharityBackendDL;
 using Dapper;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Configuration;
 using MySqlConnector;
 using Newtonsoft.Json;
 
@@ -15,11 +16,9 @@ namespace Login
 {
     public class DLLogin : DLBase, IDLLogin
     {
-        private readonly IDistributedCache _redisCache;
-        public DLLogin(IDistributedCache distributedCache)
+        public DLLogin(IDistributedCache distributedCache, IConfiguration configuration) : base(distributedCache, configuration)
         {
-            _redisCache = distributedCache;
-        } 
+        }
 
         public int CreateUser(UserRegister user)
         {
@@ -63,11 +62,7 @@ namespace Login
         {
             try
             {
-                var cacheEntryOptions = new DistributedCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromDays(1)); // Set expiration time to 1 day
-                var refreshTokenJson = JsonConvert.SerializeObject(refreshToken);
-                // Convert the JSON string to byte array
-                var refreshTokenBytes = Encoding.UTF8.GetBytes(refreshTokenJson);
-                _redisCache.Set(refreshToken.UserId.ToString(), refreshTokenBytes, cacheEntryOptions);
+                SaveDataRedis(refreshToken.UserId.ToString(), refreshToken, null);
             }
             catch (Exception ex)
             {
@@ -80,17 +75,7 @@ namespace Login
             try
             {
                 // Get the cached refreshToken value from Redis
-                var refreshTokenBytes = _redisCache.Get(userId.ToString());
-
-                if (refreshTokenBytes != null)
-                {
-                    // Deserialize the refreshToken object from the cached byte array
-                    var refreshTokenJson = Encoding.UTF8.GetString(refreshTokenBytes);
-                    var refreshToken = JsonConvert.DeserializeObject<RefreshToken>(refreshTokenJson);
-                    return refreshToken;
-                }
-
-                return null; // Return null if refreshToken not found in cache
+                return GetDataRedis<RefreshToken>(userId.ToString());
             }
             catch (Exception ex)
             {

@@ -1,4 +1,5 @@
 ﻿using CharityAppBO;
+using Microsoft.Extensions.Caching.Distributed;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,9 +17,15 @@ namespace Base
 
     public interface IDLBase
     {
-        public int Insert<T>(T entity, string tableName, List<string> excludeColumns) where T : class;
+        int Insert<T>(T entity, string tableName, List<string> excludeColumns) where T : class;
 
-        public int Update(string tableName, Dictionary<string, string> updateColumns, Dictionary<string, OperatorWhere> whereCondition);
+        int Update(string tableName, Dictionary<string, string> updateColumns, Dictionary<string, OperatorWhere> whereCondition);
+
+        void SaveDataRedis(string key, object data, DistributedCacheEntryOptions? distributedCacheEntryOptions);
+
+        T? GetDataRedis<T>(string key) where T : class;
+
+        Task<string> UploadFileFirebase(MemoryStream memoryStream, string fileName);
 
     }
 }

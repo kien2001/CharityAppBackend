@@ -2,6 +2,7 @@
 using Base;
 using CharityAppBO.Setting;
 using CharityAppDL.Setting;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,9 +14,12 @@ namespace CharityAppBL.Setting
     public class BLSetting : IBLSetting
     {
         private readonly IDLSetting _DLSetting;
-        public BLSetting(IDLSetting setting)
+        private readonly IDLBase _dlBase;
+
+        public BLSetting(IDLSetting setting, IDLBase dLBase)
         {
             _DLSetting = setting;
+            _dlBase = dLBase;
         }
         public ReturnResult CheckPassword(int id, string password)
         {
@@ -44,17 +48,96 @@ namespace CharityAppBL.Setting
             return result;
         }
 
-        public ReturnResult UpdateInfo<T>(int id, int roleId, bool isUpdatePassword, T userUpdate) where T : class
+        /// <summary>
+        /// Cap nhat thong tin cua user charity
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="userCharityUpdate"></param>
+        /// <returns></returns>
+        public async Task<ReturnResult> UpdateCharityInfo(int id, UserCharityUpdate userCharityUpdate)
         {
             var result = new ReturnResult();
             string tableName = "user_account";
-            string oldPassword = "";
-            if (userUpdate.GetType().GetProperty("OldPassword").GetValue(userUpdate) != null)
-            {
-                oldPassword = userUpdate.GetType().GetProperty("OldPassword").GetValue(userUpdate).ToString();
-            }
+            var excludeColumns = new List<string>();
             var updateColumns = new Dictionary<string, string>();
-            var passwordColumns = new List<string>()
+
+            var whereCondition = new Dictionary<string, OperatorWhere>()
+            {
+                {"Id", new OperatorWhere(){ Operator= CharityAppBO.Operator.Equal, Value = id.ToString() } }
+            };
+            try
+            {
+                string urlAvatar = await SaveAndGetAvatar(userCharityUpdate.Avatar);
+                if (!String.IsNullOrEmpty(urlAvatar))
+                {
+                    userCharityUpdate.Avatar = urlAvatar;
+                }
+                else
+                {
+                    excludeColumns.Add("Avatar");
+                }
+                foreach (var property in userCharityUpdate.GetType().GetProperties())
+                {
+                    if (!excludeColumns.Contains(property.Name))
+                    {
+                        updateColumns.Add(property.Name, property.GetValue(userCharityUpdate).ToString());
+                    }
+                }
+                int _rs = _DLSetting.UpdateInfo(tableName, updateColumns, whereCondition);
+                if (_rs > 0)
+                {
+                    result.Ok(_rs);
+                }
+                else
+                {
+                    result.BadRequest(new List<string>() { "Update khong thanh cong" });
+                }
+                return result;
+            }
+            catch (Exception e)
+            {
+                result.InternalServer(new List<string>() { e.Message });
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// Cap nhat mat khau cua user charity
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="updatePassword"></param>
+        /// <returns></returns>
+        public ReturnResult UpdateCharityPassword(int id, UpdatePassword updatePassword)
+        {
+            var result = new ReturnResult();
+            var (checkPassword, newPasswordHash) = CheckExistPassword(id, updatePassword.OldPassword, updatePassword.NewPassword);
+            if (!checkPassword)
+            {
+                result.BadRequest(new List<string>()
+                                    {
+                                        "Mat khau khong khop voi mat khau hien tai, vui long thu lai"
+                                    });
+                return result;
+            }
+
+            int _rs = _DLSetting.UpdateCharityPassword(id, newPasswordHash);
+            if (_rs > 0)
+            {
+                result.Ok(_rs);
+            }
+            else
+            {
+                result.BadRequest(new List<string>() { "Update khong thanh cong" });
+            }
+            return result;
+        }
+
+        public async Task<ReturnResult> UpdateInfo(int id, bool isUpdatePassword, UserNormalUpdate userNormalUpdate)
+        {
+            var result = new ReturnResult();
+            string tableName = "user_account";
+            var updateColumns = new Dictionary<string, string>();
+            var excludeColumns = new List<string>()
             {
                 "OldPassword", "NewPassword", "ConfirmNewPassword"
             };
@@ -62,37 +145,43 @@ namespace CharityAppBL.Setting
             {
                 {"Id", new OperatorWhere(){ Operator= CharityAppBO.Operator.Equal, Value = id.ToString() } }
             };
-            switch (roleId)
+            try
             {
-                case (int)RoleUser.Admin:
-                    break;
-
-                case (int)RoleUser.UserNormal:
-                    if (!isUpdatePassword)
+                string urlAvatar = await SaveAndGetAvatar(userNormalUpdate.Avatar);
+                if (!String.IsNullOrEmpty(urlAvatar))
+                {
+                    userNormalUpdate.Avatar = urlAvatar;
+                }
+                else
+                {
+                    excludeColumns.Add("Avatar");
+                }
+                if (!isUpdatePassword)
+                {
+                    // chi update info, ko update password
+                    foreach (var property in userNormalUpdate.GetType().GetProperties())
                     {
-                        // chi update info, ko update password
-                        foreach (var property in userUpdate.GetType().GetProperties())
+                        if (!excludeColumns.Contains(property.Name))
                         {
-                            if (!passwordColumns.Contains(property.Name.Trim()) && property.GetValue(userUpdate) != null)
-                            {
-                                updateColumns.Add(property.Name, property.GetValue(userUpdate).ToString());
-                            }
+                            updateColumns.Add(property.Name, property.GetValue(userNormalUpdate).ToString());
                         }
-                        int _rs = _DLSetting.UpdateInfo(tableName, updateColumns, whereCondition);
-                        if (_rs > 0)
-                        {
-                            result.Ok(_rs);
-                        }
-                        else
-                        {
-                            result.BadRequest(new List<string>() { "Update khong thanh cong" });
-                        }
+                    }
+                    int _rs = _DLSetting.UpdateInfo(tableName, updateColumns, whereCondition);
+                    if (_rs > 0)
+                    {
+                        result.Ok(_rs);
                     }
                     else
                     {
-                        // update ca password va info
-                        string newPassword = userUpdate.GetType().GetProperty("NewPassword").GetValue(userUpdate).ToString();
-                        var (checkPassword, newPasswordHash) = CheckExistPassword(id, oldPassword, newPassword);
+                        result.BadRequest(new List<string>() { "Update khong thanh cong" });
+                    }
+                }
+                else
+                {
+                    // update ca password va info
+                    if (userNormalUpdate.OldPassword != null && userNormalUpdate.NewPassword != null)
+                    {
+                        var (checkPassword, newPasswordHash) = CheckExistPassword(id, userNormalUpdate.OldPassword, userNormalUpdate.NewPassword);
                         if (!checkPassword)
                         {
                             result.BadRequest(new List<string>()
@@ -101,15 +190,15 @@ namespace CharityAppBL.Setting
                                     });
                             return result;
                         }
-                        foreach (var property in userUpdate.GetType().GetProperties())
+                        foreach (var property in userNormalUpdate.GetType().GetProperties())
                         {
-                            if (!passwordColumns.Contains(property.Name.Trim()))
+                            if (!excludeColumns.Contains(property.Name))
                             {
-                                updateColumns.Add(property.Name, property.GetValue(userUpdate).ToString());
+                                updateColumns.Add(property.Name, property.GetValue(userNormalUpdate).ToString());
                             }
                             else
                             {
-                                if(property.Name == "NewPassword")
+                                if (property.Name == "NewPassword")
                                 {
                                     updateColumns.Add("Password", newPasswordHash);
                                 }
@@ -125,60 +214,47 @@ namespace CharityAppBL.Setting
                             result.BadRequest(new List<string>() { "Update khong thanh cong" });
                         }
                     }
-                    break;
 
-                case (int)RoleUser.UserCharity:
-                    if (isUpdatePassword)
-                    {
-                        // chi update password
-                        string newPassword = userUpdate.GetType().GetProperty("NewPassword").GetValue(userUpdate).ToString();
-                        var (checkPassword, newPasswordHash) = CheckExistPassword(id, oldPassword, newPassword);
-                        if (!checkPassword)
-                        {
-                            result.BadRequest(new List<string>()
-                                    {
-                                        "Mat khau khong khop voi mat khau hien tai, vui long thu lai"
-                                    });
-                            return result;
-                        }
-
-                        updateColumns.Add("Password", newPasswordHash);
-                        int _rs = _DLSetting.UpdateInfo(tableName, updateColumns, whereCondition);
-                        if (_rs > 0)
-                        {
-                            result.Ok(_rs);
-                        }
-                        else
-                        {
-                            result.BadRequest(new List<string>() { "Update khong thanh cong" });
-                        }
-                    }
-                    else
-                    {
-                        // chi update info
-                        foreach (var property in userUpdate.GetType().GetProperties())
-                        {
-                            if (!passwordColumns.Contains(property.Name.Trim()) && property.GetValue(userUpdate) != null)
-                            {
-                                updateColumns.Add(property.Name, property.GetValue(userUpdate).ToString());
-                            }
-                        }
-                        int _rs = _DLSetting.UpdateInfo(tableName, updateColumns, whereCondition);
-                        if (_rs > 0)
-                        {
-                            result.Ok(_rs);
-                        }
-                        else
-                        {
-                            result.BadRequest(new List<string>() { "Update khong thanh cong" });
-                        }
-                    }
-                    break;
-                default:
-                    result.InternalServer(null);
-                    break;
+                }
+                return result;
             }
-            return result;
+            catch (Exception e)
+            {
+                result.InternalServer(new List<string>() { e.Message });
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// Luu avatar len firebase
+        /// </summary>
+        /// <param name="avatarKey"></param>
+        /// <returns>Link image</returns>
+        /// <exception cref="Exception"></exception>
+        private async Task<string> SaveAndGetAvatar(string avatarKey)
+        {
+            string avatarUrl = string.Empty;
+            if (String.IsNullOrEmpty(avatarKey))
+            {
+                return avatarUrl;
+            }
+            try
+            {
+                var memoryStreamAvatarObj = _dlBase.GetDataRedis<FileSave>(avatarKey);
+                if (memoryStreamAvatarObj != null)
+                {
+                    var memoryStreamAvatar = new MemoryStream(memoryStreamAvatarObj.Data);
+                    avatarUrl = await _dlBase.UploadFileFirebase(memoryStreamAvatar, memoryStreamAvatarObj.FileName);
+
+                }
+
+                return avatarUrl;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+            
         }
 
         private (bool, string) CheckExistPassword(int id, string password, string newPassword)

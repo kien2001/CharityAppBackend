@@ -13,5 +13,7 @@ namespace CharityAppDL.Setting
 
         int UpdateInfo(string tableName, Dictionary<string, string> updateColumns, Dictionary<string, OperatorWhere> whereCondition);
 
+        int UpdateCharityPassword(int id, string newPassword);
+
     }
 }

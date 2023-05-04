@@ -1,4 +1,5 @@
 ﻿using ActionResult;
+using CharityAppBO.Setting;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,10 @@ namespace CharityAppBL.Setting
     public interface IBLSetting
     {
         ReturnResult CheckPassword(int id, string password);
-        ReturnResult UpdateInfo<T>(int id, int roleId, bool isUpdatePassword, T userUpdate) where T : class;
+        Task<ReturnResult> UpdateInfo(int id, bool isUpdatePassword, UserNormalUpdate userNormalUpdate);
+
+        Task<ReturnResult> UpdateCharityInfo(int id, UserCharityUpdate userCharityUpdate);
+        ReturnResult UpdateCharityPassword(int id, UpdatePassword updatePassword);
 
     }
 }
