@@ -8,12 +8,11 @@ CREATE TABLE charity.user_account (
   RoleId int DEFAULT NULL,
   Address varchar(255) DEFAULT NULL,
   Email varchar(50) DEFAULT NULL,
-  IsLocked tinyint DEFAULT NULL,
+  IsLocked tinyint DEFAULT 0,
   CharityId int NOT NULL,
   PRIMARY KEY (Id)
 )
 ENGINE = INNODB,
-AUTO_INCREMENT = 12,
 AVG_ROW_LENGTH = 3276,
 CHARACTER SET utf8mb4,
 COLLATE utf8mb4_0900_ai_ci;
@@ -71,11 +70,11 @@ CREATE TABLE charity.charities (
   Avatar varchar(255) DEFAULT NULL,
   CharityImages varchar(3000) DEFAULT NULL,
   GoogleMap varchar(255) DEFAULT NULL,
-  IsVerificated tinyint DEFAULT NULL,
+  IsVerificated tinyint DEFAULT 0,
   NumFollower int DEFAULT NULL,
   NumCampaign int DEFAULT NULL,
   Reach varchar(255) DEFAULT NULL,
-  Star tinyint DEFAULT NULL,
+  Star tinyint DEFAULT 0,
   PRIMARY KEY (Id)
 )
 ENGINE = INNODB,
