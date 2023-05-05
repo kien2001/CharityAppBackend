@@ -9,7 +9,7 @@ CREATE TABLE charity.user_account (
   Address varchar(255) DEFAULT NULL,
   Email varchar(50) DEFAULT NULL,
   IsLocked tinyint DEFAULT 0,
-  CharityId int NOT NULL,
+  CharityId int DEFAULT NULL,
   Province varchar(50) DEFAULT NULL,
   District varchar(50) DEFAULT NULL,
   Ward varchar(50) DEFAULT NULL,
