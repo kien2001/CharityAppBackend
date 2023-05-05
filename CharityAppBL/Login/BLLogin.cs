@@ -8,6 +8,7 @@ using Auth;
 using CharityBackendDL;
 using Newtonsoft.Json;
 using System.Net.Http;
+using System.Dynamic;
 
 namespace CharityAppBL.Login
 {
@@ -49,14 +50,17 @@ namespace CharityAppBL.Login
 
                 string tokenStr = GenerateToken(_user) ?? throw new Exception("Error when create Token");
 
-                var charityName = userLogin?.CharityName ?? "";
-                if(charityName.Length > 0)
+                var roleId = userLogin?.RoleId;
+                if(roleId != null)
                 {
-                    userLogin = CharityUtil.ConvertToType<UserCharityReturn>(userLogin);
-                }
-                else
-                {
-                    userLogin = CharityUtil.ConvertToType<UserNormalReturn>(userLogin);
+                    if (int.Parse(roleId.ToString()) == (int)RoleUser.UserCharity)
+                    {
+                        userLogin = CharityUtil.ConvertToType<UserCharityReturn>(userLogin);
+                    }
+                    else if(int.Parse(roleId.ToString()) == (int)RoleUser.UserNormal)
+                    {
+                        userLogin = CharityUtil.ConvertToType<UserNormalReturn>(userLogin);
+                    }
                 }
                 var objectResult = new
                 {
@@ -111,15 +115,9 @@ namespace CharityAppBL.Login
               identity.Claims,
               expires: DateTime.Now.AddDays(1),
               signingCredentials: credentials);
-            var refreshToken = new RefreshToken()
-            {
-                JwtId = token.Id,
-                UserId = user.Id,
-                CreatedDate = DateTime.UtcNow, 
-                ExpiredDate = DateTime.UtcNow.AddDays(1) 
-            };
 
-            _dlLogin.SaveToken(refreshToken);
+            var _token = new JwtSecurityTokenHandler().WriteToken(token);
+            _dlLogin.SaveToken(user.Id, _token);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }

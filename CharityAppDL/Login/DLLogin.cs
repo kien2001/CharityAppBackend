@@ -56,13 +56,13 @@ namespace Login
         /// <summary>
         /// Luu token vao cache
         /// </summary>
-        /// <param name="refreshToken"></param>
+        /// <param name="token"></param>
         /// <exception cref="Exception"></exception>
-        public void SaveToken(RefreshToken refreshToken)
+        public void SaveToken(int id, string token)
         {
             try
             {
-                SaveDataRedis(refreshToken.UserId.ToString(), refreshToken, null);
+                SaveDataRedis(id.ToString(), token, null);
             }
             catch (Exception ex)
             {
@@ -70,12 +70,12 @@ namespace Login
             }
         }
 
-        public RefreshToken? GetToken(int userId)
+        public string GetToken(int userId)
         {
             try
             {
                 // Get the cached refreshToken value from Redis
-                return GetDataRedis<RefreshToken>(userId.ToString());
+                return GetDataRedis<string>(userId.ToString());
             }
             catch (Exception ex)
             {

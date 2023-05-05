@@ -14,9 +14,9 @@ namespace Login
 
         public int CreateUser(UserRegister user);
 
-        public void SaveToken(RefreshToken refreshToken);
+        public void SaveToken(int id, string token);
 
-        public RefreshToken GetToken(int userId);
+        public string GetToken(int userId);
 
         //public RefreshToken GetToken(string token);
 

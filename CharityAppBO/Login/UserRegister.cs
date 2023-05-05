@@ -46,12 +46,6 @@ namespace Login
 
         public string? CharityFile { get; set; }
 
-
-        //[Url]
-        //public string ImageUrl { get; set; }
-
-        //public bool IsVerified { get; set; }
-
         [Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 6)]
         [DataType(DataType.Password)]

@@ -53,21 +53,20 @@ namespace Validation
 
                 var expiryDate = UnixTimeStampToDateTime(utcExpiryDate);
 
-                if (expiryDate > DateTime.Now)
+                if (expiryDate < DateTime.Now)
                 {
                     throw new SecurityTokenException("Token has not yet expired");
                 }
 
                 Claim userIdClaim = principal.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier) ?? throw new Exception("UserId claim not found in token");
                 int userId = int.Parse(userIdClaim.Value);
-                 var storedToken = _dlLogin.GetToken(userId);
+                var storedToken = _dlLogin.GetToken(userId);
                 if (storedToken == null)
                 {
                     throw new SecurityTokenException("Token does not exist");
                 }
-                var jti = principal.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Jti)?.Value;
 
-                if (storedToken.JwtId != jti)
+                if (storedToken != token)
                 {
                     throw new SecurityTokenException("Token does not match");
                 }
@@ -84,8 +83,8 @@ namespace Validation
         private static DateTime UnixTimeStampToDateTime(long unixTimeStamp)
         {
             var dateTimeVal = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            dateTimeVal.AddSeconds(unixTimeStamp);
-            return dateTimeVal.ToLocalTime();
+            var dateTimeExp = dateTimeVal.AddSeconds(unixTimeStamp);
+            return dateTimeExp.ToLocalTime();
         }
     }
 }
