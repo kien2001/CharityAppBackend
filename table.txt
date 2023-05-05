@@ -1,0 +1,48 @@
+// tạo bảng user_account
+DROP TABLE IF EXISTS user_account;
+CREATE TABLE charity.user_account (
+  Id int NOT NULL AUTO_INCREMENT,
+  UserName varchar(255) DEFAULT NULL,
+  Password varchar(255) DEFAULT NULL,
+  SaltPassword varchar(255) DEFAULT NULL,
+  RoleId int DEFAULT NULL,
+  Address varchar(255) DEFAULT NULL,
+  Email varchar(50) DEFAULT NULL,
+  PhoneNumber varchar(255) DEFAULT NULL,
+  CharityName varchar(255) DEFAULT NULL,
+  CharityAddress varchar(255) DEFAULT NULL,
+  CharityPhone varchar(255) DEFAULT NULL,
+  CharityEmail varchar(255) DEFAULT NULL,
+  CharityMotto varchar(255) DEFAULT NULL,
+  CharityTarget varchar(255) DEFAULT NULL,
+  CharityDescription varchar(255) DEFAULT NULL,
+  CharityFile varchar(255) DEFAULT NULL,
+  IsLocked tinyint DEFAULT NULL,
+  Avatar varchar(255) DEFAULT NULL,
+  PRIMARY KEY (Id)
+)
+ENGINE = INNODB,
+AUTO_INCREMENT = 12,
+AVG_ROW_LENGTH = 3276,
+CHARACTER SET utf8mb4,
+COLLATE utf8mb4_0900_ai_ci;
+
+// tạo bảng role
+DROP TABLE IF EXISTS role;
+CREATE TABLE charity.role (
+  Id int NOT NULL AUTO_INCREMENT,
+  RoleName varchar(255) NOT NULL DEFAULT '',
+  PRIMARY KEY (Id)
+)
+ENGINE = INNODB,
+AUTO_INCREMENT = 4,
+AVG_ROW_LENGTH = 8192,
+CHARACTER SET utf8mb4,
+COLLATE utf8mb4_0900_ai_ci,
+COMMENT = 'Lưu thông tin vai trò';
+
+// thêm data cho role
+INSERT INTO role (Id, RoleName) VALUES
+(1, 'Admin'),
+(2, 'UserNormal'),
+(3, 'UserCharity');
