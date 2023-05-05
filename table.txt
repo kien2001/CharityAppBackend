@@ -1,4 +1,4 @@
-// tạo bảng user_account
+// tạo bảng user_account: thông tin tài khoản
 DROP TABLE IF EXISTS user_account;
 CREATE TABLE charity.user_account (
   Id int NOT NULL AUTO_INCREMENT,
@@ -8,17 +8,8 @@ CREATE TABLE charity.user_account (
   RoleId int DEFAULT NULL,
   Address varchar(255) DEFAULT NULL,
   Email varchar(50) DEFAULT NULL,
-  PhoneNumber varchar(255) DEFAULT NULL,
-  CharityName varchar(255) DEFAULT NULL,
-  CharityAddress varchar(255) DEFAULT NULL,
-  CharityPhone varchar(255) DEFAULT NULL,
-  CharityEmail varchar(255) DEFAULT NULL,
-  CharityMotto varchar(255) DEFAULT NULL,
-  CharityTarget varchar(255) DEFAULT NULL,
-  CharityDescription varchar(255) DEFAULT NULL,
-  CharityFile varchar(255) DEFAULT NULL,
   IsLocked tinyint DEFAULT NULL,
-  Avatar varchar(255) DEFAULT NULL,
+  CharityId int NOT NULL,
   PRIMARY KEY (Id)
 )
 ENGINE = INNODB,
@@ -27,7 +18,11 @@ AVG_ROW_LENGTH = 3276,
 CHARACTER SET utf8mb4,
 COLLATE utf8mb4_0900_ai_ci;
 
-// tạo bảng role
+ALTER TABLE charity.user_account
+ADD CONSTRAINT FK_user_account_CharityId FOREIGN KEY (CharityId)
+REFERENCES charity.charities (Id);
+
+// tạo bảng role: thông tin vai trò
 DROP TABLE IF EXISTS role;
 CREATE TABLE charity.role (
   Id int NOT NULL AUTO_INCREMENT,
@@ -46,3 +41,43 @@ INSERT INTO role (Id, RoleName) VALUES
 (1, 'Admin'),
 (2, 'UserNormal'),
 (3, 'UserCharity');
+
+
+// tạo bảng charities: thông tin tổ chức
+DROP TABLE IF EXISTS charities;
+CREATE TABLE charity.charities (
+  Id int NOT NULL AUTO_INCREMENT,
+  CharityName varchar(255) NOT NULL DEFAULT '',
+  CharityAddress varchar(255) DEFAULT NULL,
+  CharityProvince varchar(50) DEFAULT NULL,
+  CharityDistrict varchar(50) DEFAULT NULL,
+  CharityWard varchar(50) DEFAULT NULL,
+  CharityProvinceId int DEFAULT NULL,
+  CharityDistrictId int DEFAULT NULL,
+  CharityWardId int DEFAULT NULL,
+  CharityPhoneNumber varchar(20) DEFAULT NULL,
+  CharityEmail varchar(255) DEFAULT NULL,
+  CharityMotto varchar(1000) DEFAULT NULL,
+  CharityTarget varchar(1000) DEFAULT NULL,
+  CharityDescription varchar(1000) DEFAULT NULL,
+  CharityFacebook varchar(500) DEFAULT NULL,
+  CharityInstagram varchar(500) DEFAULT NULL,
+  CharityTwitter varchar(500) DEFAULT NULL,
+  CharityLinkedIn varchar(500) DEFAULT NULL,
+  CharityIntroVideo varchar(500) DEFAULT NULL,
+  CharityBank varchar(255) DEFAULT NULL,
+  CharityFile varchar(255) DEFAULT NULL,
+  CharityAccountNumber varchar(255) DEFAULT NULL,
+  Avatar varchar(255) DEFAULT NULL,
+  CharityImages varchar(3000) DEFAULT NULL,
+  GoogleMap varchar(255) DEFAULT NULL,
+  IsVerificated tinyint DEFAULT NULL,
+  NumFollower int DEFAULT NULL,
+  NumCampaign int DEFAULT NULL,
+  Reach varchar(255) DEFAULT NULL,
+  Star tinyint DEFAULT NULL,
+  PRIMARY KEY (Id)
+)
+ENGINE = INNODB,
+CHARACTER SET utf8mb4,
+COLLATE utf8mb4_0900_ai_ci;
