@@ -136,16 +136,6 @@ namespace CharityAppBL.Setting
             };
             try
             {
-                string urlAvatar = await SaveAndGetAvatar(userNormalUpdate.Avatar);
-                if (!String.IsNullOrEmpty(urlAvatar))
-                {
-                    userNormalUpdate.Avatar = urlAvatar;
-                }
-                else
-                {
-                    excludeColumns.Add("Avatar");
-                }
-               
                 // chi update info, ko update password
                 foreach (var property in userNormalUpdate.GetType().GetProperties())
                 {

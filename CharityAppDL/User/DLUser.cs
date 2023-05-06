@@ -39,7 +39,7 @@ namespace CharityAppDL.User
             mySqlConnection.Open();
             try
             {
-                string query = "Select * from user_account where Id = @param limit 1;";
+                string query = "Select * from charities c right join user_account ua on ua.CharityId = c.Id where ua.Id = @param limit 1;";
 
                 DynamicParameters dynamicParameters = new();
                 dynamicParameters.Add("@param", id);
