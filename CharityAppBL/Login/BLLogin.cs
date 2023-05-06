@@ -138,7 +138,7 @@ namespace CharityAppBL.Login
             var _user = _dlLogin.GetUserByUsrNameOrId(user.Username);
             if(_user != null)
             {
-                result.BadRequest(new List<string> { "Ten dang nhap da ton tai, vui long thu ten khac" });
+                result.BadRequest(new List<string> { "Tên đăng nhập đã tồn tại, vui lòng chọn tên khác" });
                 return result;
             }
                 
@@ -146,15 +146,34 @@ namespace CharityAppBL.Login
             user.Password = CharityUtil.CreatePasswordHash(user.Password, user.SaltPassword);
             try
             {
-                var _result = _dlLogin.CreateUser(user);
-                if(_result != 0)
+                int _result;
+                var excludeColumns = new List<string>() { "InfoCharity", "ConfirmPassword"};
+                if (user.RoleId == (int)RoleUser.UserNormal)
                 {
-                    
-                    result.CreatedSuccess(_result);
+                    _result = _dlLogin.CreateUser(user, excludeColumns);
+                    if (_result != 0)
+                    {
+                        result.CreatedSuccess(_result);
+                    }
                 }
-                else
+                else if (user.RoleId == (int)RoleUser.UserCharity)
                 {
-                    result.BadRequest(new List<string> { "Looix" });
+                    if (user.InfoCharity != null)
+                    {
+                        var idCharity = _dlLogin.CreateCharity(user.InfoCharity);
+
+                        if (idCharity != 0)
+                        {
+                            user.CharityId = idCharity;
+                            _result = _dlLogin.CreateUser(user, excludeColumns);
+                            if (_result == 0) {
+                                var _rs = _dlLogin.DeleteCharity(idCharity);
+                                result.BadRequest(new List<string> { "Dang ki khong thanh cong" });
+                                return result;
+                            }
+                            result.Ok(_result);
+                        }
+                    }
                 }
             }
             catch (Exception e)

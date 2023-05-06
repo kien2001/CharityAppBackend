@@ -12,7 +12,10 @@ namespace Login
     {
         public dynamic? GetUserByUsrNameOrId(string userName);
 
-        public int CreateUser(UserRegister user);
+        public int CreateUser(UserRegister user, List<string> excludeColumns);
+
+        public int DeleteCharity(int id);
+        public int CreateCharity(InfoCharity infoCharity);
 
         public void SaveToken(int id, string token);
 

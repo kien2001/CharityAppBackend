@@ -19,6 +19,9 @@ namespace Base
     {
         int Insert<T>(T entity, string tableName, List<string> excludeColumns) where T : class;
 
+        int InsertAndGetId<T>(T entity, string tableName, List<string> excludeColumns) where T : class;
+
+
         int Update(string tableName, Dictionary<string, string> updateColumns, Dictionary<string, OperatorWhere> whereCondition);
 
         void SaveDataRedis(string key, object data, DistributedCacheEntryOptions? distributedCacheEntryOptions);

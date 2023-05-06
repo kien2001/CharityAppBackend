@@ -1,4 +1,5 @@
 ﻿using Base;
+using CharityAppBO.Setting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,7 @@ namespace CharityAppDL.Setting
         int UpdateInfo(string tableName, Dictionary<string, string> updateColumns, Dictionary<string, OperatorWhere> whereCondition);
 
         int UpdateCharityPassword(int id, string newPassword);
+        int UpdateCharityInfo(int id, bool isHaveAvatar, UserCharityUpdate userCharityUpdate);
 
     }
 }

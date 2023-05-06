@@ -65,6 +65,10 @@ public static class CharityUtil
     public static T ConvertToType<T>(object value) where T : class
     {
         var jsonData = JsonConvert.SerializeObject(value);
+        if (jsonData.Contains("\"Id\":null,"))
+        {
+            jsonData = jsonData.Replace("\"Id\":null,", String.Empty);
+        }
         return JsonConvert.DeserializeObject<T>(jsonData);
     }
 }

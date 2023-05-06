@@ -20,13 +20,41 @@ namespace Login
         {
         }
 
-        public int CreateUser(UserRegister user)
+        public int CreateUser(UserRegister user, List<string> excludeColumns)
         {
-            return Insert(user, "user_account", new List<string>
-            {
-                "ConfirmPassword"
-            });
+            return Insert(user, "user_account", excludeColumns);
             
+        }
+
+        public int DeleteCharity(int id)
+        {
+            using MySqlConnection mySqlConnection = new(DatabaseContext.ConnectionString);
+            mySqlConnection.Open();
+            try
+            {
+                string query = "delete from charities where Id = @Id;";
+
+                DynamicParameters dynamicParameters = new();
+                dynamicParameters.Add("@Id", id);
+
+                int _user = mySqlConnection.Execute(query, dynamicParameters);
+                return _user;
+            }
+            catch (MySqlException ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                mySqlConnection.Close();
+            }
+
+        }
+
+        public int CreateCharity(InfoCharity infoCharity)
+        {
+            return InsertAndGetId(infoCharity, "charities");
+
         }
 
         public dynamic? GetUserByUsrNameOrId(string userName)
@@ -35,7 +63,7 @@ namespace Login
             mySqlConnection.Open();
             try
             {
-                string query = "Select * from user_account where UserName = @param limit 1;";
+                string query = "Select * from charities c right join user_account ua on ua.CharityId = c.Id where UserName = @param limit 1;";
 
                 DynamicParameters dynamicParameters = new();
                 dynamicParameters.Add("@param", userName);

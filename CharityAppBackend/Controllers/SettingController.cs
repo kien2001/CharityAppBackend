@@ -32,19 +32,8 @@ namespace CharityAppBackend.Controllers
         [Authorize(Roles = "UserNormal")]
         public async Task<IActionResult> UpdateUserNormal(int id, [FromBody] UserNormalUpdate userNormalUpdate)
         {
-            var oldPassword = userNormalUpdate.OldPassword;
-            var result = new ReturnResult();
-            if (String.IsNullOrEmpty(oldPassword))
-            {
-                // ko co password => update info
-                result = await _bLSetting.UpdateInfo(id, false, userNormalUpdate);
-            }
-            else
-            {
-                // update password (co the co info hoac khong)
-                result = await _bLSetting.UpdateInfo(id, true, userNormalUpdate);
+            var result = await _bLSetting.UpdateInfo(id, true, userNormalUpdate);
 
-            }
             if (result.IsSuccess)
             {
                 return Ok(result);
@@ -66,8 +55,8 @@ namespace CharityAppBackend.Controllers
             return BadRequest(result);
         }
 
-        [HttpPut("user-charity/edit-password/{id}")]
-        [Authorize(Roles = "UserCharity")]
+        [HttpPut("user/edit-password/{id}")]
+        [Authorize(Roles = "UserCharity, UserNormal")]
         public IActionResult UpdateCharityPassword(int id, [FromBody] UpdatePassword updatePassword)
         {
             var result = _bLSetting.UpdateCharityPassword(id, updatePassword);

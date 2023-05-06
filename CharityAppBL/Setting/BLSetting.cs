@@ -57,33 +57,22 @@ namespace CharityAppBL.Setting
         public async Task<ReturnResult> UpdateCharityInfo(int id, UserCharityUpdate userCharityUpdate)
         {
             var result = new ReturnResult();
-            string tableName = "user_account";
             var excludeColumns = new List<string>();
-            var updateColumns = new Dictionary<string, string>();
-
-            var whereCondition = new Dictionary<string, OperatorWhere>()
-            {
-                {"Id", new OperatorWhere(){ Operator= CharityAppBO.Operator.Equal, Value = id.ToString() } }
-            };
+            bool isHaveAvatar = false;
             try
             {
                 string urlAvatar = await SaveAndGetAvatar(userCharityUpdate.Avatar);
                 if (!String.IsNullOrEmpty(urlAvatar))
                 {
                     userCharityUpdate.Avatar = urlAvatar;
+                    isHaveAvatar = true;
                 }
                 else
                 {
                     excludeColumns.Add("Avatar");
                 }
-                foreach (var property in userCharityUpdate.GetType().GetProperties())
-                {
-                    if (!excludeColumns.Contains(property.Name))
-                    {
-                        updateColumns.Add(property.Name, property.GetValue(userCharityUpdate).ToString());
-                    }
-                }
-                int _rs = _DLSetting.UpdateInfo(tableName, updateColumns, whereCondition);
+                
+                int _rs = _DLSetting.UpdateCharityInfo(id, isHaveAvatar, userCharityUpdate);
                 if (_rs > 0)
                 {
                     result.Ok(_rs);
@@ -156,65 +145,23 @@ namespace CharityAppBL.Setting
                 {
                     excludeColumns.Add("Avatar");
                 }
-                if (!isUpdatePassword)
+               
+                // chi update info, ko update password
+                foreach (var property in userNormalUpdate.GetType().GetProperties())
                 {
-                    // chi update info, ko update password
-                    foreach (var property in userNormalUpdate.GetType().GetProperties())
+                    if (!excludeColumns.Contains(property.Name))
                     {
-                        if (!excludeColumns.Contains(property.Name))
-                        {
-                            updateColumns.Add(property.Name, property.GetValue(userNormalUpdate).ToString());
-                        }
+                        updateColumns.Add(property.Name, property.GetValue(userNormalUpdate).ToString());
                     }
-                    int _rs = _DLSetting.UpdateInfo(tableName, updateColumns, whereCondition);
-                    if (_rs > 0)
-                    {
-                        result.Ok(_rs);
-                    }
-                    else
-                    {
-                        result.BadRequest(new List<string>() { "Update khong thanh cong" });
-                    }
+                }
+                int _rs = _DLSetting.UpdateInfo(tableName, updateColumns, whereCondition);
+                if (_rs > 0)
+                {
+                    result.Ok(_rs);
                 }
                 else
                 {
-                    // update ca password va info
-                    if (userNormalUpdate.OldPassword != null && userNormalUpdate.NewPassword != null)
-                    {
-                        var (checkPassword, newPasswordHash) = CheckExistPassword(id, userNormalUpdate.OldPassword, userNormalUpdate.NewPassword);
-                        if (!checkPassword)
-                        {
-                            result.BadRequest(new List<string>()
-                                    {
-                                        "Mat khau khong khop voi mat khau hien tai, vui long thu lai"
-                                    });
-                            return result;
-                        }
-                        foreach (var property in userNormalUpdate.GetType().GetProperties())
-                        {
-                            if (!excludeColumns.Contains(property.Name))
-                            {
-                                updateColumns.Add(property.Name, property.GetValue(userNormalUpdate).ToString());
-                            }
-                            else
-                            {
-                                if (property.Name == "NewPassword")
-                                {
-                                    updateColumns.Add("Password", newPasswordHash);
-                                }
-                            }
-                        }
-                        int _rs = _DLSetting.UpdateInfo(tableName, updateColumns, whereCondition);
-                        if (_rs > 0)
-                        {
-                            result.Ok(_rs);
-                        }
-                        else
-                        {
-                            result.BadRequest(new List<string>() { "Update khong thanh cong" });
-                        }
-                    }
-
+                    result.BadRequest(new List<string>() { "Update khong thanh cong" });
                 }
                 return result;
             }

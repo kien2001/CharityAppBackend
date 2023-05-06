@@ -99,6 +99,47 @@ namespace Base
             }
         }
 
+        public int InsertAndGetId<T>(T entity, string tableName, List<string>? excludeColumns = null) where T : class
+        {
+            if (excludeColumns == null)
+            {
+                excludeColumns = new List<string>() { "Id" };
+            }
+            else
+            {
+                excludeColumns.Add("Id");
+            }
+            using MySqlConnection mySqlConnection = new(DatabaseContext.ConnectionString);
+            mySqlConnection.Open();
+            using MySqlTransaction mySqlTransaction = mySqlConnection.BeginTransaction();
+            try
+            {
+                string query = $"Insert into {tableName}";
+                var properties = entity.GetType().GetProperties().Where(p => excludeColumns.All(q => p.Name != q));
+                string field = string.Join(", ", properties.Select(p => p.Name));
+                string dynamicParam = string.Join(", ", properties.Select(p => $"@{p.Name}"));
+                query = $"{query} ({field}) values ({dynamicParam});SELECT LAST_INSERT_ID()";
+                DynamicParameters dynamicParameters = new();
+                foreach (var prop in properties)
+                {
+                    dynamicParameters.Add($"@{prop.Name}", prop.GetValue(entity));
+                }
+                var result = mySqlConnection.ExecuteScalar<int>(query, dynamicParameters, mySqlTransaction);
+                mySqlTransaction.Commit();
+                return result;
+
+            }
+            catch (MySqlException ex)
+            {
+                mySqlTransaction.Rollback();
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                mySqlConnection.Close();
+            }
+        }
+
         public void SaveDataRedis(string key, object data, DistributedCacheEntryOptions? distributedCacheEntryOptions)
         {
             try
