@@ -29,6 +29,12 @@ namespace Login
         public int RoleId { get; set; }
 
         /// <summary>
+        /// Id tổ chức
+        /// </summary>
+        public int? CharityId { get; set; }
+
+
+        /// <summary>
         /// Ten vai tro
         /// </summary>
         public string RoleName

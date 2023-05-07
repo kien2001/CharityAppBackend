@@ -28,14 +28,17 @@ namespace CharityAppBL.Users
             var user = _dLUser.GetUser(id);
             if (user != null)
             {
-                var charityName = user?.CharityName ?? "";
-                if (charityName.Length > 0)
+                var roleId = user?.RoleId;
+                if (roleId != null)
                 {
-                    user = CharityUtil.ConvertToType<UserCharityReturn>(user);
-                }
-                else
-                {
-                    user = CharityUtil.ConvertToType<UserNormalReturn>(user);
+                    if (int.Parse(roleId.ToString()) == (int)RoleUser.UserCharity)
+                    {
+                        user = CharityUtil.ConvertToType<UserCharityReturn>(user);
+                    }
+                    else if (int.Parse(roleId.ToString()) == (int)RoleUser.UserNormal)
+                    {
+                        user = CharityUtil.ConvertToType<UserNormalReturn>(user);
+                    }
                 }
                 result.Ok(user);
                 return result;
@@ -56,14 +59,17 @@ namespace CharityAppBL.Users
             {
                 foreach (var user in listUser)
                 {
-                    var charityName = user?.CharityName ?? "";
-                    if (charityName.Length > 0)
+                    var roleId = user?.RoleId;
+                    if (roleId != null)
                     {
-                        objReturn.Add(CharityUtil.ConvertToType<UserCharityReturn>(user));
-                    }
-                    else
-                    {
-                        objReturn.Add(CharityUtil.ConvertToType<UserNormalReturn>(user));
+                        if (int.Parse(roleId.ToString()) == (int)RoleUser.UserCharity)
+                        {
+                            objReturn.Add(CharityUtil.ConvertToType<UserCharityReturn>(user));
+                        }
+                        else if (int.Parse(roleId.ToString()) == (int)RoleUser.UserNormal)
+                        {
+                            objReturn.Add(CharityUtil.ConvertToType<UserNormalReturn>(user));
+                        }
                     }
                 }
                 result.Ok(objReturn);

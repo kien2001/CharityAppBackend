@@ -13,6 +13,8 @@ namespace Login
         [StringLength(50, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 6)]
         public string Username { get; set; }
 
+        public string Name { get; set; }
+
         [Required]
         [EmailAddress]
         public string Email { get; set; }
@@ -56,29 +58,6 @@ namespace Login
 
     public class InfoCharity
     {
-
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 6)]
-        public string CharityName { get; set; }
-
-        public string CharityAddress { get; set; } = string.Empty;
-        public int CharityProvinceId { get; set; } = 0;
-
-        public string CharityProvince { get; set; } = string.Empty;
-
-        public int CharityDistrictId { get; set; } = 0;
-        public string CharityDistrict { get; set; } = string.Empty;
-
-        public int CharityWardId { get; set; } = 0;
-        public string CharityWard { get; set; } = string.Empty;
-
-        [Required]
-        [RegularExpression(@"(84|0[3|5|7|8|9])+([0-9]{8})\b", ErrorMessage = "Invalid Phone Number!")]
-        public string CharityPhoneNumber { get; set; }
-
-        [Required]
-        [EmailAddress]
-        public string CharityEmail { get; set; }
-
         public string CharityMotto { get; set; } = string.Empty;
 
         public string CharityTarget { get; set; } = string.Empty;

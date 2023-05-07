@@ -9,36 +9,55 @@ namespace Login
 {
     public class UserCharityReturn
     {
+        // user
         public int Id { get; set; }
         public string UserName { get; set; }
+
         public string Email { get; set; }
-        public int RoleId { get; set; }
+
+        public string Name { get; set; }
         public string PhoneNumber { get; set; }
 
+        public string Address { get; set; }
+
+        public int ProvinceId { get; set; } = 0;
+
+        public string Province { get; set; } = string.Empty;
+
+
+        public int DistrictId { get; set; } = 0;
+        public string District { get; set; } = string.Empty;
+
+        public int WardId { get; set; } = 0;
+        public string Ward { get; set; } = string.Empty;
+
+        // to chuc
+        public string Avatar { get; set; }
+
         public int CharityId { get; set; }
-        public string CharityName { get; set; }
 
-        public string CharityAddress { get; set; }
+        public string CharityMotto { get; set; } = string.Empty;
 
+        public string CharityTarget { get; set; } = string.Empty;
 
-        public string CharityPhonenumber { get; set; }
-        public string CharityEmail { get; set; }
+        public string CharityDescription { get; set; } = string.Empty;
 
-        public string CharityMotto { get; set; }
+        public string CharityFile { get; set; } = string.Empty;
 
-        public string CharityTarget { get; set; }
+        public string CharityFacebook { get; set; } = string.Empty;
 
-        public string CharityDescription { get; set; }
+        public string CharityInstagram { get; set; } = string.Empty;
 
-        public string CharityFile { get; set; }
+        public string CharityTwitter { get; set; } = string.Empty;
 
-        public bool IsLocked { get; set; }
+        public string CharityLinkedIn { get; set; } = string.Empty;
 
+        public string CharityIntroVideo { get; set; } = string.Empty;
+        public string CharityBank { get; set; } = string.Empty;
+        public string CharityAccountNumber { get; set; } = string.Empty;
+        public string CharityImages { get; set; } = string.Empty;
 
-        //[Url]
-        //public string ImageUrl { get; set; }
-
-        //public bool IsVerified { get; set; }
+        public string GoogleMap { get; set; } = string.Empty;
 
     }
 
@@ -46,10 +65,24 @@ namespace Login
     {
         public int Id { get; set; }
         public string UserName { get; set; }
+
         public string Email { get; set; }
-        public int RoleId { get; set; }
+
+        public string Name { get; set; }
         public string PhoneNumber { get; set; }
-        public bool IsLocked { get; set; }
+
+        public string Address { get; set; }
+
+        public int ProvinceId { get; set; } = 0;
+
+        public string Province { get; set; } = string.Empty;
+
+
+        public int DistrictId { get; set; } = 0;
+        public string District { get; set; } = string.Empty;
+
+        public int WardId { get; set; } = 0;
+        public string Ward { get; set; } = string.Empty;
 
     }
 }

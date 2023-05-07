@@ -17,7 +17,7 @@ namespace CharityAppDL.User
             mySqlConnection.Open();
             try
             {
-                string query = "Select ua.* from user_account ua join role r on ua.RoleId = r.Id where r.RoleName <> 'Admin';";
+                string query = "Select c.*, ua.* from charities c right join user_account ua on c.Id = ua.CharityId join role r on ua.RoleId = r.Id where r.RoleName <> 'Admin';";
 
                 var listUser = mySqlConnection.Query(query).ToList();
                 return listUser;

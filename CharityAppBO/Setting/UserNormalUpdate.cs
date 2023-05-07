@@ -13,6 +13,7 @@ namespace CharityAppBO.Setting
         [Required]
         [EmailAddress]
         public string Email { get; set; }
+        public string Name { get; set; }
 
         [Required]
         [RegularExpression(@"(84|0[3|5|7|8|9])+([0-9]{8})\b", ErrorMessage = "Invalid Phone Number!")]
@@ -31,10 +32,5 @@ namespace CharityAppBO.Setting
         public int WardId { get; set; } = 0;
         public string Ward { get; set; } = string.Empty;
 
-
-        //[Url]
-        //public string ImageUrl { get; set; }
-
-        //public bool IsVerified { get; set; }
     }
 }
