@@ -2,7 +2,7 @@
 DROP TABLE IF EXISTS user_account;
 CREATE TABLE charity.user_account (
   Id int NOT NULL AUTO_INCREMENT,
-  DisplayName varchar(255) DEFAULT NULL,
+  Name varchar(255) DEFAULT NULL,
   UserName varchar(255) DEFAULT NULL,
   PhoneNumber varchar(20) DEFAULT NULL,
   Password varchar(255) DEFAULT NULL,
