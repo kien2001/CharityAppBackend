@@ -28,15 +28,15 @@ namespace Login
         [RegularExpression(@"(84|0[3|5|7|8|9])+([0-9]{8})\b", ErrorMessage = "Invalid Phone Number!")]
         public string PhoneNumber { get; set; }
 
-        public int ProvinceId { get; set; } = 0;
+        public string ProvinceId { get; set; } = "0";
 
         public string Province { get; set; } = string.Empty;
 
 
-        public int DistrictId { get; set; } = 0;
+        public string DistrictId { get; set; } = "0";
         public string District { get; set; } = string.Empty;
 
-        public int WardId { get; set; } = 0;
+        public string WardId { get; set; } = "0";
         public string Ward { get; set; } = string.Empty;
 
         [Required]

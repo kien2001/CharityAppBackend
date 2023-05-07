@@ -20,15 +20,15 @@ namespace Login
 
         public string Address { get; set; }
 
-        public int ProvinceId { get; set; } = 0;
+        public string ProvinceId { get; set; } = "0";
 
         public string Province { get; set; } = string.Empty;
 
 
-        public int DistrictId { get; set; } = 0;
+        public string DistrictId { get; set; } = "0";
         public string District { get; set; } = string.Empty;
 
-        public int WardId { get; set; } = 0;
+        public string WardId { get; set; } = "0";
         public string Ward { get; set; } = string.Empty;
 
         // to chuc
@@ -73,15 +73,15 @@ namespace Login
 
         public string Address { get; set; }
 
-        public int ProvinceId { get; set; } = 0;
+        public string ProvinceId { get; set; } = "0";
 
         public string Province { get; set; } = string.Empty;
 
 
-        public int DistrictId { get; set; } = 0;
+        public string DistrictId { get; set; } = "0";
         public string District { get; set; } = string.Empty;
 
-        public int WardId { get; set; } = 0;
+        public string WardId { get; set; } = "0";
         public string Ward { get; set; } = string.Empty;
 
     }
