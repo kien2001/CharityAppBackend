@@ -15,9 +15,9 @@ CREATE TABLE charity.user_account (
   Province varchar(50) DEFAULT NULL,
   District varchar(50) DEFAULT NULL,
   Ward varchar(50) DEFAULT NULL,
-  ProvinceId int DEFAULT NULL,
-  DistrictId int DEFAULT NULL,
-  WardId int DEFAULT NULL,
+  ProvinceId varchar(10) DEFAULT NULL,
+  DistrictId varchar(10) DEFAULT NULL,
+  WardId varchar(10) DEFAULT NULL,
   PRIMARY KEY (Id)
 )
 ENGINE = INNODB,
