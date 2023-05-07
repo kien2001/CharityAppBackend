@@ -2,6 +2,7 @@
 DROP TABLE IF EXISTS user_account;
 CREATE TABLE charity.user_account (
   Id int NOT NULL AUTO_INCREMENT,
+  DisplayName varchar(255) DEFAULT NULL,
   UserName varchar(255) DEFAULT NULL,
   PhoneNumber varchar(20) DEFAULT NULL,
   Password varchar(255) DEFAULT NULL,
@@ -49,16 +50,6 @@ INSERT INTO role (Id, RoleName) VALUES
 DROP TABLE IF EXISTS charities;
 CREATE TABLE charity.charities (
   Id int NOT NULL AUTO_INCREMENT,
-  CharityName varchar(255) NOT NULL DEFAULT '',
-  CharityAddress varchar(255) DEFAULT NULL,
-  CharityProvince varchar(50) DEFAULT NULL,
-  CharityDistrict varchar(50) DEFAULT NULL,
-  CharityWard varchar(50) DEFAULT NULL,
-  CharityProvinceId int DEFAULT NULL,
-  CharityDistrictId int DEFAULT NULL,
-  CharityWardId int DEFAULT NULL,
-  CharityPhoneNumber varchar(20) DEFAULT NULL,
-  CharityEmail varchar(255) DEFAULT NULL,
   CharityMotto varchar(1000) DEFAULT NULL,
   CharityTarget varchar(1000) DEFAULT NULL,
   CharityDescription varchar(1000) DEFAULT NULL,
@@ -81,5 +72,6 @@ CREATE TABLE charity.charities (
   PRIMARY KEY (Id)
 )
 ENGINE = INNODB,
+AVG_ROW_LENGTH = 5461,
 CHARACTER SET utf8mb4,
 COLLATE utf8mb4_0900_ai_ci;
