@@ -205,10 +205,6 @@ namespace Base
 
         public async Task<string> UploadFileFirebase(MemoryStream memoryStream, string fileName)
         {
-            using var stream = new MemoryStream();
-            await memoryStream.CopyToAsync(stream);
-            stream.Position = 0;
-
             var auth = new FirebaseAuthProvider(new FirebaseConfig(ApiKey));
             var a = await auth.SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword);
 
@@ -224,7 +220,7 @@ namespace Base
                 })
                 .Child("avatar")
                 .Child(fileName)
-                .PutAsync(stream, cancellation.Token);
+                .PutAsync(memoryStream, cancellation.Token);
 
             string downloadUrl = "";
             try

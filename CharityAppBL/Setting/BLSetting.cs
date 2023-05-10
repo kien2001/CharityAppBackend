@@ -61,10 +61,8 @@ namespace CharityAppBL.Setting
             bool isHaveAvatar = false;
             try
             {
-                string urlAvatar = await SaveAndGetAvatar(userCharityUpdate.Avatar);
-                if (!String.IsNullOrEmpty(urlAvatar))
+                if (!String.IsNullOrEmpty(userCharityUpdate.Avatar))
                 {
-                    userCharityUpdate.Avatar = urlAvatar;
                     isHaveAvatar = true;
                 }
                 else

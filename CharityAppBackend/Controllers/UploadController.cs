@@ -8,7 +8,7 @@ namespace CharityAppBackend.Controllers
 {
     [Route("upload")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class UploadController : ControllerBase
     {
         private readonly IBLUpload _bLUpload;
@@ -18,8 +18,7 @@ namespace CharityAppBackend.Controllers
         [HttpPost]
         public async Task<ActionResult<string>> UploadFile(IFormFile file)
         {
-            var id = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var result = await _bLUpload.UploadFile(id, file);
+            var result = await _bLUpload.UploadFile(file);
             if (result.IsSuccess)
             {
                 return Ok(result);

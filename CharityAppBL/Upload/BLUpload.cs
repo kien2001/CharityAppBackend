@@ -24,7 +24,7 @@ namespace CharityAppBL.Upload
         {
             _base = dLBase;
         }
-        public async Task<ReturnResult> UploadFile(int id, IFormFile formFile)
+        public async Task<ReturnResult> UploadFile(IFormFile formFile)
         {
             var result = new ReturnResult();
             List<string> ContentTypeImage = new() { "image/jpeg", "image/png" };
@@ -41,25 +41,17 @@ namespace CharityAppBL.Upload
                     // ảnh -> lưu vào cache
                     if (ContentTypeImage.Contains(formFile.Headers.ContentType.ToString()))
                     {
-                        string key = id.ToString() + key_avatar;
                         using var stream = new MemoryStream();
                         await formFile.CopyToAsync(stream);
-                        var objSave = new FileSave()
-                        {
-                            FileName = formFile.FileName,
-                            Data = stream.ToArray()
-                        };
-                        _base.SaveDataRedis(key, objSave, null);
-                        result.Ok(key);
-                        return result;
-
+                        stream.Position = 0;
+                        string fileUrl = await _base.UploadFileFirebase(stream, formFile.FileName);
+                        result.Ok(fileUrl);
                     }
                 }
                 //else
                 //{
                 //    // xử lý file lớn
                 //}
-                result.BadRequest(new List<string> { "Có lỗi xảy ra, vui lòng thử lại" });
                 return result;
             }
             catch (Exception e)

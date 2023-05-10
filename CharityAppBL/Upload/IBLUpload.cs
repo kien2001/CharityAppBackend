@@ -11,6 +11,6 @@ namespace CharityAppBL.Upload
 {
     public interface IBLUpload
     {
-        Task<ReturnResult> UploadFile(int id, IFormFile formFile);
+        Task<ReturnResult> UploadFile(IFormFile formFile);
     }
 }
