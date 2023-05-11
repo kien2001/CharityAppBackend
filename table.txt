@@ -53,6 +53,7 @@ CREATE TABLE charity.charities (
   CharityMotto varchar(1000) DEFAULT NULL,
   CharityTarget varchar(1000) DEFAULT NULL,
   CharityDescription varchar(1000) DEFAULT NULL,
+  CharityWebsite varchar(255) DEFAULT NULL,
   CharityFacebook varchar(500) DEFAULT NULL,
   CharityInstagram varchar(500) DEFAULT NULL,
   CharityTwitter varchar(500) DEFAULT NULL,
