@@ -1,8 +1,10 @@
 using Base;
+using CharityAppBL.Charity;
 using CharityAppBL.Login;
 using CharityAppBL.Setting;
 using CharityAppBL.Upload;
 using CharityAppBL.Users;
+using CharityAppDL.Charity;
 using CharityAppDL.Setting;
 using CharityAppDL.User;
 using CharityBackendDL;
@@ -85,6 +87,8 @@ builder.Services.AddScoped<IBLUser, BLUser>();
 builder.Services.AddScoped<IDLUser, DLUser>();
 builder.Services.AddScoped<IBLUpload, BLUpload>();
 builder.Services.AddScoped<IDLBase, DLBase>();
+builder.Services.AddScoped<IBLCharity, BLCharity>();
+builder.Services.AddScoped<IDLCharity, DLCharity>();
 
 
 builder.Services.AddScoped<JwtTokenValidator>();

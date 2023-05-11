@@ -57,20 +57,10 @@ namespace CharityAppBL.Setting
         public async Task<ReturnResult> UpdateCharityInfo(int id, UserCharityUpdate userCharityUpdate)
         {
             var result = new ReturnResult();
-            var excludeColumns = new List<string>();
-            bool isHaveAvatar = false;
             try
             {
-                if (!String.IsNullOrEmpty(userCharityUpdate.Avatar))
-                {
-                    isHaveAvatar = true;
-                }
-                else
-                {
-                    excludeColumns.Add("Avatar");
-                }
-                
-                int _rs = _DLSetting.UpdateCharityInfo(id, isHaveAvatar, userCharityUpdate);
+               
+                int _rs = _DLSetting.UpdateCharityInfo(id, userCharityUpdate);
                 if (_rs > 0)
                 {
                     result.Ok(_rs);

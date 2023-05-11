@@ -48,7 +48,7 @@ namespace CharityAppDL.Setting
             return Update(tableName, updateColumns, whereCondition);
         }
 
-        public int UpdateCharityInfo(int id, bool isHaveAvatar, UserCharityUpdate userCharityUpdate)
+        public int UpdateCharityInfo(int id, UserCharityUpdate userCharityUpdate)
         {
             using MySqlConnection mySqlConnection = new(DatabaseContext.ConnectionString);
             mySqlConnection.Open();
@@ -57,7 +57,7 @@ namespace CharityAppDL.Setting
             {
                 // Update thong tin to chuc
                 DynamicParameters dynamicParameters = new();
-                string queryCharity = GenerateQuery(userCharityUpdate.CharityId, "charities", isHaveAvatar, userCharityUpdate.CharityInfo, ref dynamicParameters);
+                string queryCharity = GenerateQuery(userCharityUpdate.CharityId, "charities", userCharityUpdate.CharityInfo, ref dynamicParameters);
                 var result = mySqlConnection.Execute(queryCharity, dynamicParameters, mySqlTransaction);
                 
                 
@@ -65,7 +65,7 @@ namespace CharityAppDL.Setting
                 var userAccount = CharityUtil.ConvertToType<UserNormalUpdate>(userCharityUpdate);
                 DynamicParameters dynamicParameter1 = new();
 
-                string queryUser = GenerateQuery(id, "user_account", isHaveAvatar, userAccount, ref dynamicParameter1);
+                string queryUser = GenerateQuery(id, "user_account", userAccount, ref dynamicParameter1);
                 var result1 = mySqlConnection.Execute(queryUser, dynamicParameter1, mySqlTransaction);
                 if (result1 == 0)
                 {
@@ -89,16 +89,12 @@ namespace CharityAppDL.Setting
             }
         }
 
-        private string GenerateQuery(int idUpdate, string table, bool isHaveAvatar, object objUpdate, ref DynamicParameters dynamicParameters)
+        private string GenerateQuery(int idUpdate, string table, object objUpdate, ref DynamicParameters dynamicParameters)
         {
             string firstQuery = $"Update {table} set ";
             var columnUpdate = new List<string>();
             foreach (var property in objUpdate.GetType().GetProperties())
             {
-                if (!isHaveAvatar && property.Name == "Avatar")
-                {
-                    continue;
-                }
                 string field = $"{property.Name} = @{property.Name}";
                 columnUpdate.Add(field);
             }
@@ -108,10 +104,6 @@ namespace CharityAppDL.Setting
             firstQuery += columnStr;
             foreach (var column in objUpdate.GetType().GetProperties())
             {
-                if (!isHaveAvatar && column.Name == "Avatar")
-                {
-                    continue;
-                }
                 dynamicParameters.Add($"@{column.Name}", column.GetValue(objUpdate));
             }
             return firstQuery;

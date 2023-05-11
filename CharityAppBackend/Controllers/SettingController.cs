@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CharityAppBackend.Controllers
 {
     [Route("setting")]
-    [Authorize]
+    //[Authorize]
     [ApiController]
     public class SettingController : ControllerBase
     {
@@ -43,7 +43,7 @@ namespace CharityAppBackend.Controllers
 
 
         [HttpPut("user-charity/edit-info/{id}")]
-        [Authorize(Roles = "UserCharity")]
+        //[Authorize(Roles = "UserCharity")]
         public async Task<IActionResult> UpdateCharityInfo(int id, [FromBody] UserCharityUpdate userCharityUpdate)
         {
             var result = await _bLSetting.UpdateCharityInfo(id, userCharityUpdate);

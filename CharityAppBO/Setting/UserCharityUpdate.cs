@@ -16,7 +16,6 @@ namespace CharityAppBO.Setting
         public string Name { get; set; }
 
 
-        public string Avatar { get; set; }
         [RegularExpression(@"(84|0[3|5|7|8|9])+([0-9]{8})\b", ErrorMessage = "Invalid Phone Number!")]
         public string PhoneNumber { get; set; }
 
@@ -41,6 +40,9 @@ namespace CharityAppBO.Setting
 
     public class CharityInfo
     {
+        public string Avatar { get; set; }
+
+        public string CharityWebsite { get; set; }
         public string CharityMotto { get; set; } = string.Empty;
 
         public string CharityTarget { get; set; } = string.Empty;
