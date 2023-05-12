@@ -29,5 +29,27 @@ namespace CharityAppBL.Charity
             }
             return result;
         }
+
+        public ReturnResult GetCharity(int charityId)
+        {
+            var result = new ReturnResult();
+            try
+            {
+                var _rs = _dlCharity.GetAllCharity();
+                if(_rs != null )
+                {
+                    result.Ok(_rs);
+                }
+                else
+                {
+                    result.BadRequest(new List<string> { "Tổ chức bạn tìm kiếm không có." });
+                }
+            }
+            catch (Exception e)
+            {
+                result.InternalServer(new List<string> { e.Message });
+            }
+            return result;
+        }
     }
 }

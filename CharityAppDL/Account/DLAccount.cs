@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CharityAppDL.User
 {
-    public class DLUser : IDLUser
+    public class DLAccount : IDLAccount
     {
         public List<dynamic> GetAllUser()
         {

@@ -43,6 +43,8 @@ namespace CharityAppBO.Setting
         public string Avatar { get; set; }
 
         public string CharityWebsite { get; set; }
+
+        public string CharityBanner { get; set; }
         public string CharityMotto { get; set; } = string.Empty;
 
         public string CharityTarget { get; set; } = string.Empty;

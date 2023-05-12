@@ -11,7 +11,7 @@ namespace CharityAppBL.Login
 {
     public interface IBLLogin
     {
-        public ReturnResult Authenthicate(UserLogin user);
+        public Task<ReturnResult> Authenthicate(UserLogin user);
 
         public ReturnResult Register(UserRegister user);
 

@@ -1,5 +1,6 @@
 ﻿
 using CharityAppBL.Charity;
+using CharityAppBL.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,15 +16,24 @@ namespace CharityAppBackend.Controllers
     public class ChairityController : ControllerBase
     {
         private IBLCharity _blCharity;
-        public ChairityController(IBLCharity iBLCharity)
+        private IBLAccount _blAccount;
+
+        public ChairityController(IBLCharity iBLCharity, IBLAccount ibLAccount)
         {
             _blCharity = iBLCharity;
+            _blAccount = ibLAccount;
         }
         // GET: api/<ChairityController>
         [HttpGet("all")]
         public IActionResult GetALlCharities()
         {
             var result = _blCharity.GetAllCharities();
+            return Ok(result);
+        }
+        [HttpGet("{charityId}")]
+        public IActionResult GetCharity(int charityId)
+        {
+            var result = _blAccount.GetUser(charityId);
             return Ok(result);
         }
     }

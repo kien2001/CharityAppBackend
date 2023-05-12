@@ -51,6 +51,8 @@ DROP TABLE IF EXISTS charities;
 CREATE TABLE charity.charities (
   Id int NOT NULL AUTO_INCREMENT,
   CharityMotto varchar(1000) DEFAULT NULL,
+  CharityWebsite varchar(255) DEFAULT NULL,
+  CharityBanner varchar(255) DEFAULT NULL,
   CharityTarget varchar(1000) DEFAULT NULL,
   CharityDescription varchar(1000) DEFAULT NULL,
   CharityWebsite varchar(255) DEFAULT NULL,
@@ -74,5 +76,17 @@ CREATE TABLE charity.charities (
 )
 ENGINE = INNODB,
 AVG_ROW_LENGTH = 5461,
+CHARACTER SET utf8mb4,
+COLLATE utf8mb4_0900_ai_ci;
+
+// bảng theo dõi follow tổ chức
+drop table if exists charity_follow;
+CREATE TABLE charity.charity_follow (
+  Id int NOT NULL AUTO_INCREMENT,
+  UserId int DEFAULT NULL,
+  CharityId int DEFAULT NULL,
+  PRIMARY KEY (Id)
+)
+ENGINE = INNODB,
 CHARACTER SET utf8mb4,
 COLLATE utf8mb4_0900_ai_ci;

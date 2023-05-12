@@ -10,5 +10,6 @@ namespace CharityAppDL.Charity
     public interface IDLCharity
     {
         List<CharityItem> GetAllCharity();
+
     }
 }

@@ -22,9 +22,9 @@ namespace Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public IActionResult Login([FromBody] UserLogin user)
+        public async Task<IActionResult> Login([FromBody] UserLogin user)
         {
-            ReturnResult result = _blLogin.Authenthicate(user);
+            ReturnResult result = await _blLogin.Authenthicate(user);
             return Ok(result);
         }
 

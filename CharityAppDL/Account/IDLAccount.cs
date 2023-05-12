@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CharityAppDL.User
 {
-    public interface IDLUser
+    public interface IDLAccount
     {
         dynamic GetUser(int id);
 

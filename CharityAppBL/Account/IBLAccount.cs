@@ -8,10 +8,14 @@ using System.Threading.Tasks;
 
 namespace CharityAppBL.Users
 {
-    public interface IBLUser
+    public interface IBLAccount
     {
-        ReturnResult GetFollowCharities(int userId);
+        ReturnResult GetUser(int id);
 
-        ReturnResult ChangeStatusFollow(StatusFollow statusFollow);
+        ReturnResult GetAllUser();
+
+        ReturnResult ChangeStatus(UpdateStatusUser updateStatusUser);
+
+
     }
 }

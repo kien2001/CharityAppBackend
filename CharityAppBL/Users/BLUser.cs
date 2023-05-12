@@ -1,7 +1,6 @@
 ﻿using ActionResult;
 using CharityAppBO.Users;
-using CharityAppDL.User;
-using Login;
+using CharityAppDL.Users;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,84 +11,47 @@ namespace CharityAppBL.Users
 {
     public class BLUser : IBLUser
     {
-        private IDLUser _dLUser;
-        public BLUser(IDLUser dLUser) {
-            _dLUser = dLUser;
+        private IDLUser _dlUser;
+        public BLUser(IDLUser iDLUser)
+        {
+            this._dlUser = iDLUser;
         }
 
-        /// <summary>
-        /// Lấy thông tin user có id truyền vào
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public ReturnResult GetUser(int id)
+        public ReturnResult ChangeStatusFollow(StatusFollow statusFollow)
         {
             var result = new ReturnResult();
-            var user = _dLUser.GetUser(id);
-            if (user != null)
+            try
             {
-                var roleId = user?.RoleId;
-                if (roleId != null)
+                var _rs = _dlUser.ChangeStatusFollow(statusFollow);
+                if(_rs > 0)
                 {
-                    if (int.Parse(roleId.ToString()) == (int)RoleUser.UserCharity)
-                    {
-                        user = CharityUtil.ConvertToType<UserCharityReturn>(user);
-                    }
-                    else if (int.Parse(roleId.ToString()) == (int)RoleUser.UserNormal)
-                    {
-                        user = CharityUtil.ConvertToType<UserNormalReturn>(user);
-                    }
+                    result.Ok(_rs);
                 }
-                result.Ok(user);
-                return result;
+                else
+                {
+                    result.BadRequest(new List<string> { "Bạn đã bỏ theo dõi tổ chức này" });
+                }
             }
-            result.BadRequest(new List<string>() { "Người dùng không tồn tại" });
-            return result;
-        }
-        /// <summary>
-        /// Lấy tất cả user
-        /// </summary>
-        /// <returns></returns>
-        public ReturnResult GetAllUser()
-        {
-            var result = new ReturnResult();
-            var objReturn = new List<object>();
-            var listUser = _dLUser.GetAllUser();
-            if (listUser != null && listUser.Count > 0)
+            catch (Exception e)
             {
-                foreach (var user in listUser)
-                {
-                    var roleId = user?.RoleId;
-                    if (roleId != null)
-                    {
-                        if (int.Parse(roleId.ToString()) == (int)RoleUser.UserCharity)
-                        {
-                            objReturn.Add(CharityUtil.ConvertToType<UserCharityReturn>(user));
-                        }
-                        else if (int.Parse(roleId.ToString()) == (int)RoleUser.UserNormal)
-                        {
-                            objReturn.Add(CharityUtil.ConvertToType<UserNormalReturn>(user));
-                        }
-                    }
-                }
-                result.Ok(objReturn);
-                return result;
+                result.InternalServer(new List<string> { e.Message });
             }
-            result.BadRequest(new List<string>() { "Có lỗi xảy ra, vui lòng thử lại" });
             return result;
         }
 
-        public ReturnResult ChangeStatus(UpdateStatusUser updateStatusUser)
+        public ReturnResult GetFollowCharities(int userId)
         {
-            var returnResult = new ReturnResult();
-            var result = _dLUser.UpdateStatusUser(updateStatusUser.Id, updateStatusUser.Status);
-            if (result > 0)
+            var result = new ReturnResult();
+            try
             {
-                returnResult.Ok(result);
-                return returnResult;
+                var listCharities = _dlUser.GetFollowCharities(userId);
+                result.Ok(listCharities);
             }
-            returnResult.BadRequest(new List<string>() { "Không thể update" });
-            return returnResult;
+            catch (Exception e)
+            {
+                result.InternalServer(new List<string> { e.Message });
+            }
+            return result;
         }
     }
 }

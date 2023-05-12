@@ -23,7 +23,7 @@ namespace CharityAppBL.Login
             _tokenValidationParameters = tokenValidationParameters;
         }
 
-        public ReturnResult Authenthicate(UserLogin user)
+        public async Task<ReturnResult> Authenthicate(UserLogin user)
         {
             var result = new ReturnResult();
             try
@@ -68,8 +68,13 @@ namespace CharityAppBL.Login
                     Token = tokenStr,
                     User = userLogin
                 };
+                var objectResult1 = new
+                {
+                    token = tokenStr,
+                    user_id = userLogin
+                };
                 result.Ok(objectResult);
-                var _result = SendTokenToAPI(objectResult);
+                var _result = await SendTokenToAPI(objectResult1);
                 return result;
             }
             catch (Exception e)
@@ -83,7 +88,7 @@ namespace CharityAppBL.Login
         public async Task<object?> SendTokenToAPI(object requestData)
         {
             var content = new StringContent(JsonConvert.SerializeObject(requestData), Encoding.UTF8, "application/json");
-            HttpResponseMessage response = await _httpClient.PostAsync("http://localhost:8089/charity/access/token", content);
+            HttpResponseMessage response = await _httpClient.GetAsync("http://host.docker.internal:8089/charity/address/ping");
             if (response.IsSuccessStatusCode)
             {
                 string responseData = await response.Content.ReadAsStringAsync();
