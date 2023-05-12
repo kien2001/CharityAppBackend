@@ -61,6 +61,10 @@ namespace Login
 
         public string GoogleMap { get; set; } = string.Empty;
 
+        public string CharityBanner { get; set; } = string.Empty;
+
+        public string CharityWebsite { get; set; } = string.Empty;
+
     }
 
     public class UserNormalReturn
