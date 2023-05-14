@@ -11,13 +11,13 @@ services:
     depends_on:
       - db
     environment:
-      - ConnectionStrings__MySQLConnection= Server = db; Port= 3306; Database = charity; Uid = root; Pwd = secret;
+      - ConnectionStrings__MySQLConnection=Server=db;Port=3306;Database=charity;Uid=root;Pwd=secret;
     volumes:
       - ./:/charitybackendapi
   db:
     image: mysql:8.0
     ports:
-      - "3306:3306"
+      - "3666:3306"
     volumes:
       - charity-mysql-data:/var/lib/mysql
     restart: always

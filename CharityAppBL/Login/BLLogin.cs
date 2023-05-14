@@ -71,7 +71,7 @@ namespace CharityAppBL.Login
                 var objectResult1 = new
                 {
                     token = tokenStr,
-                    user_id = userLogin
+                    user_id = userLogin.Id
                 };
                 result.Ok(objectResult);
                 var _result = await SendTokenToAPI(objectResult1);
@@ -88,7 +88,7 @@ namespace CharityAppBL.Login
         public async Task<object?> SendTokenToAPI(object requestData)
         {
             var content = new StringContent(JsonConvert.SerializeObject(requestData), Encoding.UTF8, "application/json");
-            HttpResponseMessage response = await _httpClient.GetAsync("http://host.docker.internal:8089/charity/address/ping");
+            HttpResponseMessage response = await _httpClient.PostAsync("http://host.docker.internal:8089/charity/access/token", content);
             if (response.IsSuccessStatusCode)
             {
                 string responseData = await response.Content.ReadAsStringAsync();

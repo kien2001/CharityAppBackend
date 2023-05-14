@@ -42,8 +42,8 @@ namespace Controllers
         [AllowAnonymous]
         public IActionResult ForgetPassword()
         {
-            var a = CharityUtil.SendResetPasswordEmail("kienlevan2001@gmail.com", "9285783");
-            return Ok(a);
+            CharityUtil.SendMailKit("kienlevan2001@gmail.com", "Mã xác minh nè", "9285783");
+            return Ok();
         }
     }
 }

@@ -1,7 +1,7 @@
-﻿using FluentEmail.Core;
-using FluentEmail.Razor;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
+﻿using MailKit.Net.Smtp;
+using MailKit.Security;
+using MimeKit;
+using MimeKit.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
@@ -9,6 +9,7 @@ using Newtonsoft.Json.Schema.Generation;
 using System.Dynamic;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Text;
 public static class CharityUtil
@@ -59,20 +60,27 @@ public static class CharityUtil
         }
     }
 
-    public static async Task<bool> SendResetPasswordEmail(string email, string resetCode)
+    public static void SendMailKit(string to, string subject, string html)
     {
-        var senderEmail = "kienlevan2001@gmail.com";
-        var senderName = "kien";
+        // create message
+        var email = new MimeMessage();
+        email.From.Add(MailboxAddress.Parse("hoailinh.ahihi@gmail.com"));
+        email.To.Add(MailboxAddress.Parse(to));
+        email.Subject = subject;
+        email.Body = new TextPart(TextFormat.Html) { Text = html };
 
-        var model = new { ResetCode = resetCode };
-        //await Email
-        //    .From(senderEmail, senderName)
-        //    .To(email)
-        //.Subject("Password Reset")
-        //.UsingTemplate()    
-        //.SendAsync();
+        // send email
+        using var smtp = new SmtpClient();
+        smtp.CheckCertificateRevocation = false;
+        //smtp.SslProtocols = SslProtocols.Ssl3 | SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12 | SslProtocols.Tls13;
+        smtp.Connect("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
 
-        return true;
+        // Note: since we don't have an OAuth2 token, disable
+        // the XOAUTH2 authentication mechanism.
+        smtp.AuthenticationMechanisms.Remove("XOAUTH2");
+        smtp.Authenticate("hoailinh.ahihi@gmail.com", "jhuubqzghnabiyss");
+        smtp.Send(email);
+        smtp.Disconnect(true);
     }
 
     public static ExpandoObject ToExpando(object model)
