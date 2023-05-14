@@ -21,8 +21,7 @@ namespace Login
 
         public string GetToken(int userId);
 
-        //public RefreshToken GetToken(string token);
+        public void Logout(int id);
 
-        public int UpdateRefreshToken(Dictionary<string, string> columnUpdate, Dictionary<string, OperatorWhere> whereCondition);
     }
 }

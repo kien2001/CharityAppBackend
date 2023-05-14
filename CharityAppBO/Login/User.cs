@@ -71,11 +71,7 @@ namespace Login
         /// </summary>
         public string ImageUrl { get; set; }
 
-        /// <summary>
-        /// xac minh hay chua
-        /// </summary>
-        public bool IsVerified { get; set; }
-
+     
         public string SaltPassword { get; set; }
 
     }

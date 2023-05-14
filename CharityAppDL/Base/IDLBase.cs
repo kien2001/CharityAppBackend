@@ -30,5 +30,6 @@ namespace Base
 
         Task<string> UploadFileFirebase(MemoryStream memoryStream, string fileName);
 
+        void DeleteDataRedis(string redisKey);
     }
 }

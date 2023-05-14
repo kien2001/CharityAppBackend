@@ -9,6 +9,8 @@ namespace CharityAppBL.Charity
 {
     public interface IBLCharity
     {
-        ReturnResult GetAllCharities();
+        ReturnResult GetAllCharities(int? userId);
+
+        ReturnResult GetCharityById(int charityId, int? userId);
     }
 }

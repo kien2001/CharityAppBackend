@@ -262,6 +262,18 @@ namespace Base
             }
             return whereQuery.Count > 0 ? string.Join(" And ", whereQuery) : string.Empty;
         }
+
+        public void DeleteDataRedis(string redisKey)
+        {
+            try
+            {
+                _redisCache.Remove(redisKey);
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+        }
     }
 
     

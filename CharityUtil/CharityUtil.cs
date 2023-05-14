@@ -1,10 +1,16 @@
-﻿using Newtonsoft.Json;
+﻿using FluentEmail.Core;
+using FluentEmail.Razor;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
 using Newtonsoft.Json.Schema.Generation;
+using System.Dynamic;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
-
 public static class CharityUtil
 {
     public static string CreatePasswordHash(string password, string salt)
@@ -51,6 +57,57 @@ public static class CharityUtil
             }
             return true;
         }
+    }
+
+    public static async Task<bool> SendResetPasswordEmail(string email, string resetCode)
+    {
+        var senderEmail = "kienlevan2001@gmail.com";
+        var senderName = "kien";
+
+        var model = new { ResetCode = resetCode };
+        //await Email
+        //    .From(senderEmail, senderName)
+        //    .To(email)
+        //.Subject("Password Reset")
+        //.UsingTemplate()    
+        //.SendAsync();
+
+        return true;
+    }
+
+    public static ExpandoObject ToExpando(object model)
+    {
+        if (model is ExpandoObject exp)
+        {
+            return exp;
+        }
+
+        IDictionary<string, object> expando = new ExpandoObject();
+        foreach (var propertyDescriptor in model.GetType().GetTypeInfo().GetProperties())
+        {
+            var obj = propertyDescriptor.GetValue(model);
+
+            if (obj != null && IsAnonymousType(obj.GetType()))
+            {
+                obj = ToExpando(obj);
+            }
+
+            expando.Add(propertyDescriptor.Name, obj);
+        }
+
+        return (ExpandoObject)expando;
+    }
+
+    private static bool IsAnonymousType(Type type)
+    {
+        bool hasCompilerGeneratedAttribute = type.GetTypeInfo()
+            .GetCustomAttributes(typeof(CompilerGeneratedAttribute), false)
+            .Any();
+
+        bool nameContainsAnonymousType = type.FullName.Contains("AnonymousType");
+        bool isAnonymousType = hasCompilerGeneratedAttribute && nameContainsAnonymousType;
+
+        return isAnonymousType;
     }
 
     public static bool CanBeConverted<T>(object value) where T : class

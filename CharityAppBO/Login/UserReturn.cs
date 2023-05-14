@@ -65,6 +65,7 @@ namespace Login
 
         public string CharityWebsite { get; set; } = string.Empty;
 
+        public bool IsVerified { get; set; }
     }
 
     public class UserNormalReturn

@@ -11,11 +11,11 @@ namespace CharityAppBL.Login
 {
     public interface IBLLogin
     {
-        public Task<ReturnResult> Authenthicate(UserLogin user);
+        Task<ReturnResult> Authenthicate(UserLogin user);
 
-        public ReturnResult Register(UserRegister user);
+        ReturnResult Register(UserRegister user);
 
-        //public ReturnResult VerifyToken(TokenRequest tokenRequest);
+        ReturnResult Logout(int id);
 
     }
 }

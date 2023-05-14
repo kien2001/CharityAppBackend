@@ -111,10 +111,9 @@ namespace Login
             }
         }
 
-        public int UpdateRefreshToken(Dictionary<string, string> columnUpdate, Dictionary<string, OperatorWhere> whereCondition)
+        public void Logout(int userId)
         {
-            return Update("refresh_token", columnUpdate, whereCondition);
-
+            DeleteDataRedis(userId.ToString());
         }
     }
 }

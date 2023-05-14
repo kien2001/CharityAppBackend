@@ -24,7 +24,7 @@ namespace CharityAppDL.Users
                 if(statusFollow.IsFollow)
                 {
                     // follow
-                    query = "insert charity_follow(userId, charityId) value (@userId, @charityId);";
+                    query = "insert charity_follow(userId, charityId) select @userId, @charityId WHERE NOT EXISTS (SELECT userId, charityId FROM charity_follow WHERE UserId = @userId AND CharityId = @charityId) ;";
                 }
                 else
                 {

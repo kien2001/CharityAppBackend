@@ -12,7 +12,7 @@ using System.Security.Claims;
 
 namespace Controllers
 {
-    [Route("user")]
+    [Route("account")]
     [ApiController]
     [Authorize]
     public class AccountController : ControllerBase

@@ -28,29 +28,22 @@ namespace Controllers
             return Ok(result);
         }
 
-        //[HttpPost]
-        //[Authorize]
-        //public IActionResult Logout()
-        //{
+        [HttpGet]
+        [Authorize]
+        [Route("/logout")]
+        public IActionResult Logout()
+        {
+            var id = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var result = _blLogin.Logout(id);
+            return Ok();
+        }
 
-        //    return Ok();
-        //}
-
-        //[HttpPost]
-        //[Route("refreshtoken")]
-        //public IActionResult RefreshToken([FromBody] TokenRequest tokenRequest)
-        //{
-        //    ReturnResult returnResult = _blLogin.VerifyToken(tokenRequest);
-
-        //    if (returnResult.IsSuccess)
-        //    {
-        //        return Ok(returnResult);
-        //    }else if(!returnResult.IsAuthorized)
-        //    {
-        //        return Unauthorized(returnResult);
-        //    }
-        //    return BadRequest(returnResult);
-        //}
-
+        [HttpGet("forget-password")]
+        [AllowAnonymous]
+        public IActionResult ForgetPassword()
+        {
+            var a = CharityUtil.SendResetPasswordEmail("kienlevan2001@gmail.com", "9285783");
+            return Ok(a);
+        }
     }
 }

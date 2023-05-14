@@ -1,4 +1,6 @@
 ﻿using ActionResult;
+using CharityAppBO.Charity;
+using CharityAppBO.Users;
 using CharityAppDL.Charity;
 using System;
 using System.Collections.Generic;
@@ -16,12 +18,21 @@ namespace CharityAppBL.Charity
             this._dlCharity = iDLCharity;
         }
 
-        public ReturnResult GetAllCharities()
+        public ReturnResult GetAllCharities(int? userId)
         {
             var result = new ReturnResult();
             try
-            {                
-                result.Ok(_dlCharity.GetAllCharity());
+            { 
+                List<CharityFollow> charityFollows = new List<CharityFollow>();
+                if (userId.HasValue)
+                {
+                    charityFollows = _dlCharity.GetAllCharities(userId);
+                }
+                else
+                {
+                    charityFollows = _dlCharity.GetAllCharities(null);
+                }
+                result.Ok(charityFollows);
             }
             catch (Exception e)
             {
@@ -30,13 +41,21 @@ namespace CharityAppBL.Charity
             return result;
         }
 
-        public ReturnResult GetCharity(int charityId)
+        public ReturnResult GetCharityById(int charityId, int? userId)
         {
             var result = new ReturnResult();
             try
             {
-                var _rs = _dlCharity.GetAllCharity();
-                if(_rs != null )
+                CharityObj _rs = new CharityObj();
+                if(userId == null)
+                {
+                    _rs = _dlCharity.GetCharityById(charityId, null);
+                }
+                else
+                {
+                    _rs = _dlCharity.GetCharityById(charityId, userId);
+                }
+                if (_rs != null)
                 {
                     result.Ok(_rs);
                 }

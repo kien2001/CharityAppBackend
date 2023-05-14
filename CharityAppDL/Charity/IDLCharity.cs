@@ -1,4 +1,6 @@
 ﻿using CharityAppBO.Charity;
+using CharityAppBO.Users;
+using Login;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +11,10 @@ namespace CharityAppDL.Charity
 {
     public interface IDLCharity
     {
-        List<CharityItem> GetAllCharity();
+        List<CharityFollow> GetAllCharities(int? userId);
+
+
+        CharityObj GetCharityById(int charityId, int? userId);
 
     }
 }

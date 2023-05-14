@@ -195,5 +195,20 @@ namespace CharityAppBL.Login
             dateTimeVal.AddSeconds(unixTimeStamp);
             return dateTimeVal.ToLocalTime();
         }
+
+        public ReturnResult Logout(int id)
+        {
+            var result = new ReturnResult();
+            try
+            {
+                _dlLogin.Logout(id);
+                result.Ok(null);
+            }
+            catch (Exception e)
+            {
+                result.InternalServer(new List<string> { e.Message });
+            }
+            return result;
+        }
     }
 }
