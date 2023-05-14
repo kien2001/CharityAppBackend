@@ -1,5 +1,10 @@
 version: '3.4'
 
+networks:
+  charity_network:
+    external: 
+      name: charity-network
+
 services:
   charityappbackend:
     image: charityappbackend:latest
@@ -11,9 +16,12 @@ services:
     depends_on:
       - db
     environment:
-      - ConnectionStrings__MySQLConnection=Server=db;Port=3306;Database=charity;Uid=root;Pwd=secret;
+      - ConnectionStrings__MySQLConnection=Server=mysql-charity-hoangtrinh;Port=3306;Database=charity;Uid=root;Pwd=123456;
     volumes:
       - ./:/charitybackendapi
+    networks:
+      - charity_network
+
   db:
     image: mysql:8.0
     ports:
@@ -24,10 +32,15 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: secret
       MYSQL_DATABASE: charity
+    networks:
+      - charity_network
+
   cache:
     image: redis
     ports:
       - "6379:6379"
+    networks:
+      - charity_network
 volumes:
   charity-mysql-data:
 
