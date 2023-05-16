@@ -9,6 +9,9 @@ using CharityBackendDL;
 using Newtonsoft.Json;
 using System.Net.Http;
 using System.Dynamic;
+using CharityAppBO.Login;
+using Base;
+using Microsoft.AspNetCore.Http;
 
 namespace CharityAppBL.Login
 {
@@ -16,11 +19,13 @@ namespace CharityAppBL.Login
     {
         private readonly IDLLogin _dlLogin;
         private readonly TokenValidationParameters _tokenValidationParameters;
+        private readonly IDLBase dLBase;
         private HttpClient _httpClient = new HttpClient();
-        public BLLogin(IDLLogin dlLogin, TokenValidationParameters tokenValidationParameters)
+        public BLLogin(IDLLogin dlLogin, TokenValidationParameters tokenValidationParameters, IDLBase _dLBase)
         {
             _dlLogin = dlLogin;
             _tokenValidationParameters = tokenValidationParameters;
+            dLBase = _dLBase;
         }
 
         public async Task<ReturnResult> Authenthicate(UserLogin user)
@@ -207,6 +212,127 @@ namespace CharityAppBL.Login
             catch (Exception e)
             {
                 result.InternalServer(new List<string> { e.Message });
+            }
+            return result;
+        }
+
+        public async Task<ReturnResult> ForgetPassword(string userName)
+        {
+            var result = new ReturnResult();
+            try
+            {
+                var _user = _dlLogin.GetUserByUsrNameOrId(userName);
+                if (_user != null && _user?.Email != null && _user?.Id != null)
+                {
+                    var email = _user?.Email.ToString();
+                    var id = _user?.Id.ToString();
+                    var resetCode = CharityUtil.GenerateSalt(6);
+                    await Task.Run(() => {
+                        _dlLogin.SaveResetCode($"{id}_reset", resetCode);
+                        CharityUtil.SendMailKit(email, "Mã xác minh nè", resetCode);
+                    });
+                    var objReturn = new
+                    {
+                        Email = email,
+                        Id = id
+                    };
+                    var emailHide = HideEmail(email);
+                    result.Ok(objReturn);
+                    result.Messages = new List<string>() { $"Mã xác nhận đã được gửi tới {emailHide}. Mã này có hiệu lực trong vòng 5 phút."};
+                }
+                else
+                {
+                    result.BadRequest(new List<string> { "Tên đăng nhập này không có, vui lòng thử lại." });
+                }
+            }
+            catch (Exception e)
+            {
+                result.InternalServer(new List<string> { e.Message });
+            }
+
+            return result;
+        }
+
+        private string HideEmail(string email)
+        {
+            // Find the position of the "@" symbol
+            int atIndex = email.IndexOf("@");
+
+            if (atIndex > 1)
+            {
+                // Get the first character and the domain part of the email
+                string firstCharacter = email.Substring(0, 3);
+                string domain = email.Substring(atIndex);
+
+                // Create the hidden portion
+                string hiddenPart = new string('*', atIndex - 1);
+
+                // Concatenate the parts together
+                return $"{firstCharacter}{hiddenPart}{domain}";
+            }
+
+            // Return the original email if it does not meet the requirements for hiding
+            return email;
+        }
+
+
+        public ReturnResult ResetPassword(ResetPassword resetPassword)
+        {
+            var result = new ReturnResult();
+            try
+            {
+                string saltPassword = CharityUtil.GenerateSalt();
+                string password = CharityUtil.CreatePasswordHash(resetPassword.Password, saltPassword);
+
+                dynamic resetPasswordObj = new ExpandoObject();
+                Dictionary<string, string> updateColumns = new()
+                    {
+
+                        {"Password", password },
+                        {"SaltPassword", saltPassword }
+                    };
+
+                Dictionary<string, OperatorWhere> whereCondition = new()
+                    {
+                        {"Id", new OperatorWhere(){ Operator= CharityAppBO.Operator.Equal, Value = resetPassword.Id.ToString() } }
+                    };
+
+                var _rs = dLBase.Update("user_account", updateColumns, whereCondition);
+                if (_rs > 0)
+                {
+                    result.Ok(_rs);
+                }
+                else
+                {
+                    result.BadRequest(new List<string> { "Update không thành công" });
+                }
+
+            }
+            catch (Exception e)
+            {
+                result.InternalServer(new List<string> { e.Message });
+            }
+            return result;
+        }
+
+        public ReturnResult ResetCode(ResetCode resetCode)
+        {
+            var result = new ReturnResult();
+            var code = dLBase.GetDataRedis<string>($"{resetCode.Id}_reset");
+            if(code != null)
+            {
+                if(code == resetCode.Code)
+                {
+                    result.Ok(null);
+                }
+                else
+                {
+                    result.BadRequest(new List<string> { "Mã xác nhận không đúng, vui lòng kiểm tra lại" });
+                }
+            }
+            else
+            {
+                result.BadRequest(new List<string> { "Mã xác nhận không đúng, vui lòng kiểm tra lại" });
             }
             return result;
         }

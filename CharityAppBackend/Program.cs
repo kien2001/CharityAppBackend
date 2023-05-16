@@ -165,6 +165,10 @@ builder.Services.AddAuthorization(options =>
     }
 });
 builder.Services.AddSingleton(tokenValidationParameters);
+builder.Services.AddSession(o =>
+{
+    o.IdleTimeout = TimeSpan.FromSeconds(300);// 5p
+});
 
 builder.Services.AddStackExchangeRedisCache(options =>
 {
@@ -189,7 +193,7 @@ app.UseCors(MyAllowSpecificOrigins);
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseSession();
 //app.UseEndpoints(endpoints =>
 //{
 //    endpoints.MapControllers();

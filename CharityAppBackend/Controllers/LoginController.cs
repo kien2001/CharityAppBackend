@@ -2,6 +2,7 @@
 using ActionResult;
 using Auth;
 using CharityAppBL.Login;
+using CharityAppBO.Login;
 using Login;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -35,15 +36,56 @@ namespace Controllers
         {
             var id = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             var result = _blLogin.Logout(id);
-            return Ok();
+            return Ok(result);
         }
 
-        [HttpGet("forget-password")]
+        [HttpPost]
         [AllowAnonymous]
-        public IActionResult ForgetPassword()
+        [Route("/forget-password")]
+        public async Task<IActionResult> ForgetPassword(string userName)
         {
-            CharityUtil.SendMailKit("kienlevan2001@gmail.com", "Mã xác minh nè", "9285783");
-            return Ok();
+            var result = await _blLogin.ForgetPassword(userName);
+            return Ok(result);
+        }
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("/reset-password")]
+        public IActionResult ResetPassword(ResetPassword resetPassword)
+        {
+            var result = new ReturnResult();
+            var checkResetCode = HttpContext.Session.GetString("CheckResetCode");
+            if(checkResetCode != null )
+            {
+                var isSuccess = bool.Parse(checkResetCode);
+                if(isSuccess)
+                {
+                    result = _blLogin.ResetPassword(resetPassword);
+                    HttpContext.Session.SetString("CheckResetCode", "false");
+                    return Ok(result);    
+                    
+                }
+            }
+            result.BadRequest(new List<string> { "Nhập đúng mã trước khi thay đổi mật khẩu" });
+            return BadRequest(result);
+            
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("/reset-code")]
+        public IActionResult ResetCode(ResetCode resetCode)
+        {
+            var result = _blLogin.ResetCode(resetCode);
+            if (result.IsSuccess)
+            {
+                HttpContext.Session.SetString("CheckResetCode", "true");
+                return Ok(result);
+            }
+            else
+            {
+                HttpContext.Session.SetString("CheckResetCode", "false");
+                return BadRequest(result);
+            }
         }
     }
 }

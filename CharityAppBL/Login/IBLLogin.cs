@@ -1,5 +1,6 @@
 ﻿using ActionResult;
 using Auth;
+using CharityAppBO.Login;
 using Login;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,10 @@ namespace CharityAppBL.Login
         ReturnResult Register(UserRegister user);
 
         ReturnResult Logout(int id);
+
+        Task<ReturnResult> ForgetPassword(string userName);
+        ReturnResult ResetPassword(ResetPassword resetPassword);
+        ReturnResult ResetCode(ResetCode resetCode);
 
     }
 }

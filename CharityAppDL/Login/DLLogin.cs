@@ -63,7 +63,7 @@ namespace Login
             mySqlConnection.Open();
             try
             {
-                string query = "Select * from charities c right join user_account ua on ua.CharityId = c.Id where UserName = @param limit 1;";
+                string query = "Select ua.Id as Id, ua.CharityId as CharityId, ua.*,c.* from charities c right join user_account ua on ua.CharityId = c.Id where ua.UserName = @param limit 1;";
 
                 DynamicParameters dynamicParameters = new();
                 dynamicParameters.Add("@param", userName);
@@ -91,6 +91,18 @@ namespace Login
             try
             {
                 SaveDataRedis(id.ToString(), token, null);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public void SaveResetCode(string email, string resetCode)
+        {
+            try
+            {
+                SaveDataRedis(email, resetCode, null);
             }
             catch (Exception ex)
             {

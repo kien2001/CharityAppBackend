@@ -23,5 +23,7 @@ namespace Login
 
         public void Logout(int id);
 
+        void SaveResetCode(string email, string resetCode);
+
     }
 }
