@@ -222,6 +222,8 @@ namespace CharityAppBL.Login
             try
             {
                 var _user = _dlLogin.GetUserByUsrNameOrId(userName);
+                _user = CharityUtil.ConvertToType<User>(_user);
+
                 if (_user != null && _user?.Email != null && _user?.Id != null)
                 {
                     var email = _user?.Email.ToString();

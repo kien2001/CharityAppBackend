@@ -63,8 +63,7 @@ namespace Login
             mySqlConnection.Open();
             try
             {
-                string query = "Select ua.Id as Id, ua.CharityId as CharityId, ua.*,c.* from charities c right join user_account ua on ua.CharityId = c.Id where ua.UserName = @param limit 1;";
-
+                string query = "Select * from charities c right join user_account ua on ua.CharityId = c.Id where ua.UserName = @param limit 1;";
                 DynamicParameters dynamicParameters = new();
                 dynamicParameters.Add("@param", userName);
 
