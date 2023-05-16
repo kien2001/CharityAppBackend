@@ -66,6 +66,8 @@ namespace Login
         public string CharityWebsite { get; set; } = string.Empty;
 
         public bool IsVerified { get; set; }
+        public bool IsLocked { get; set; }
+
     }
 
     public class UserNormalReturn
@@ -92,5 +94,6 @@ namespace Login
         public string WardId { get; set; } = "0";
         public string Ward { get; set; } = string.Empty;
 
+        public bool IsLocked { get; set; }
     }
 }
