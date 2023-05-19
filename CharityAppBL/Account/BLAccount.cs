@@ -25,7 +25,7 @@ namespace CharityAppBL.Users
         public ReturnResult GetUser(int id)
         {
             var result = new ReturnResult();
-            var user = _dLUser.GetUser(id);
+            var (user, numFollow, numCampaign) = _dLUser.GetUser(id);
             if (user != null)
             {
                 var roleId = user?.RoleId;
@@ -34,6 +34,10 @@ namespace CharityAppBL.Users
                     if (int.Parse(roleId.ToString()) == (int)RoleUser.UserCharity)
                     {
                         user = CharityUtil.ConvertToType<UserCharityReturn>(user);
+                        var _user = CharityUtil.ToExpando(user);
+                        _user.NumCampaign = numCampaign;
+                        _user.NumFollow = numFollow;
+                        user = _user;
                     }
                     else if (int.Parse(roleId.ToString()) == (int)RoleUser.UserNormal)
                     {

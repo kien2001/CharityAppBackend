@@ -56,5 +56,13 @@ namespace CharityAppBackend.Controllers
             }
             return Ok(result);
         }
+
+        [HttpPost("UploadVerification")]
+        public IActionResult UploadVerification(List<IFormFile> files, string subDirectory)
+        {
+            var result = new ReturnResult();
+            
+            return Ok(result);
+        }
     }
 }

@@ -8,7 +8,7 @@ namespace CharityAppDL.User
 {
     public interface IDLAccount
     {
-        dynamic GetUser(int id);
+        (dynamic?, int, int) GetUser(int id);
 
         List<dynamic> GetAllUser();
 
