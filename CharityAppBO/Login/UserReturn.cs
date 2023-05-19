@@ -65,8 +65,8 @@ namespace Login
 
         public string CharityWebsite { get; set; } = string.Empty;
 
-        //public int NumFollow { get; set; } = 0;
-        //public int NumCampaign { get; set; } = 0;
+        public int NumFollow { get; set; } = 0;
+        public int NumCampaign { get; set; } = 0;
 
         public bool IsVerified { get; set; }
         public bool IsLocked { get; set; }
