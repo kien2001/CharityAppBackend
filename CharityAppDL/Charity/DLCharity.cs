@@ -63,12 +63,12 @@ namespace CharityAppDL.Charity
                 var dynamicParam = new DynamicParameters();
                 if (userId == null)
                 {
-                    query = "Select ua.Name as CharityName, c.* from user_account ua join charities c on ua.CharityId = c.Id where ua.CharityId = @charityId  limit 1;";
+                    query = "Select ua.Name as CharityName, ua.PhoneNumber, ua.Address, ua.Email, c.* from user_account ua join charities c on ua.CharityId = c.Id where ua.CharityId = @charityId  limit 1;";
                     dynamicParam.Add("@charityId", charityId);
                 }
                 else
                 {
-                    query = "Select ua.Name as CharityName, c.*, IF(@userId = (SELECT userId FROM charity_follow cf WHERE cf.UserId = @userId AND cf.CharityId = @charityId), true, false) AS IsFollow from user_account ua join charities c on ua.CharityId = c.Id where ua.CharityId = @charityId  limit 1;";
+                    query = "Select ua.Name as CharityName, ua.PhoneNumber, ua.Address, ua.Email, c.*, IF(@userId = (SELECT userId FROM charity_follow cf WHERE cf.UserId = @userId AND cf.CharityId = @charityId), true, false) AS IsFollow from user_account ua join charities c on ua.CharityId = c.Id where ua.CharityId = @charityId  limit 1;";
                     dynamicParam.Add("@charityId", charityId);
                     dynamicParam.Add("@userId", userId);
                 }
