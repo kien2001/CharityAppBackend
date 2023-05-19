@@ -34,7 +34,9 @@ namespace CharityAppBL.Users
                 {
                     if (int.Parse(roleId.ToString()) == (int)RoleUser.UserCharity)
                     {
-                        var _user = CharityUtil.ToExpando(user);
+                        var _user = CharityUtil.ConvertToType<UserCharityReturn>(user);
+
+                        _user = CharityUtil.ToExpando(_user);
                         _user.NumCampaign = numCampaign;
                         _user.NumFollow = numFollow;
                         user = CharityUtil.ConvertToType<UserCharityReturns>(_user);
