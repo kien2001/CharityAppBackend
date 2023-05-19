@@ -1,4 +1,5 @@
 ﻿using ActionResult;
+using CharityAppBO.Account;
 using CharityAppBO.Users;
 using CharityAppDL.User;
 using Login;
@@ -36,7 +37,7 @@ namespace CharityAppBL.Users
                         var _user = CharityUtil.ToExpando(user);
                         _user.NumCampaign = numCampaign;
                         _user.NumFollow = numFollow;
-                        user = CharityUtil.ConvertToType<UserCharityReturn>(_user);
+                        user = CharityUtil.ConvertToType<UserCharityReturns>(_user);
                     }
                     else if (int.Parse(roleId.ToString()) == (int)RoleUser.UserNormal)
                     {

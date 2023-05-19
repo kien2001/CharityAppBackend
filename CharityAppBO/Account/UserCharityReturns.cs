@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Login
+namespace CharityAppBO.Account
 {
-    public class UserCharityReturn
+    public class UserCharityReturns
     {
         // user
         public int Id { get; set; }
@@ -65,38 +64,10 @@ namespace Login
 
         public string CharityWebsite { get; set; } = string.Empty;
 
-        //public int NumFollow { get; set; } = 0;
-        //public int NumCampaign { get; set; } = 0;
+        public int NumFollow { get; set; } = 0;
+        public int NumCampaign { get; set; } = 0;
 
         public bool IsVerified { get; set; }
-        public bool IsLocked { get; set; }
-
-    }
-
-    public class UserNormalReturn
-    {
-        public int Id { get; set; }
-        public string UserName { get; set; }
-        public int RoleId { get; set; }
-
-        public string Email { get; set; }
-
-        public string Name { get; set; }
-        public string PhoneNumber { get; set; }
-
-        public string Address { get; set; }
-
-        public string ProvinceId { get; set; } = "0";
-
-        public string Province { get; set; } = string.Empty;
-
-
-        public string DistrictId { get; set; } = "0";
-        public string District { get; set; } = string.Empty;
-
-        public string WardId { get; set; } = "0";
-        public string Ward { get; set; } = string.Empty;
-
         public bool IsLocked { get; set; }
     }
 }
