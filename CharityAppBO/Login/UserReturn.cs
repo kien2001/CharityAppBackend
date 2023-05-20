@@ -68,7 +68,7 @@ namespace Login
         //public int NumFollow { get; set; } = 0;
         //public int NumCampaign { get; set; } = 0;
 
-        public bool IsVerified { get; set; }
+        public int IsVerified { get; set; }
         public bool IsLocked { get; set; }
 
     }

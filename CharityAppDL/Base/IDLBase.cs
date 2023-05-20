@@ -1,4 +1,5 @@
 ﻿using CharityAppBO;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Distributed;
 using System;
 using System.Collections.Generic;
@@ -28,7 +29,7 @@ namespace Base
 
         T? GetDataRedis<T>(string key) where T : class;
 
-        Task<string> UploadFileFirebase(MemoryStream memoryStream, string fileName);
+        Task<string> UploadFileFirebase(IFormFile file, string fileName);
 
         void DeleteDataRedis(string redisKey);
     }

@@ -57,11 +57,11 @@ namespace CharityAppBackend.Controllers
             return Ok(result);
         }
 
-        [HttpPost("UploadVerification")]
-        public IActionResult UploadVerification(List<IFormFile> files, string subDirectory)
+        [HttpPost("UploadVerification/{charityId}")]
+        public async Task<IActionResult> UploadVerification(List<IFormFile> files, string message, int charityId)
         {
-            var result = new ReturnResult();
-            
+            var result = await _blCharity.SaveVerifiedImage(files, message, charityId);
+
             return Ok(result);
         }
     }

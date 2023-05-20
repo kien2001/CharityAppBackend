@@ -1,7 +1,9 @@
 ﻿using ActionResult;
+using Base;
 using CharityAppBO.Charity;
 using CharityAppBO.Users;
 using CharityAppDL.Charity;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,9 +15,11 @@ namespace CharityAppBL.Charity
     public class BLCharity: IBLCharity
     {
         private IDLCharity _dlCharity;
-        public BLCharity(IDLCharity iDLCharity)
+        private IDLBase _base;
+        public BLCharity(IDLCharity iDLCharity, IDLBase @base)
         {
             this._dlCharity = iDLCharity;
+            _base = @base;
         }
 
         public ReturnResult GetAllCharities(int? userId)
@@ -69,6 +73,51 @@ namespace CharityAppBL.Charity
                 result.InternalServer(new List<string> { e.Message });
             }
             return result;
+        }
+
+        public async Task<ReturnResult> SaveVerifiedImage(List<IFormFile> files, string message, int charityId)
+        {
+            var result = new ReturnResult();
+            List<Task<string>> saveTasks = new List<Task<string>>();
+            List<string> ContentTypeImage = new() { "image/jpeg", "image/png" };
+            try
+            {
+                foreach (var file in files)
+                {
+                    if (file.Length < 2097152)
+                    {
+                        // xử lý file nhỏ
+                        if (ContentTypeImage.Contains(file.Headers.ContentType.ToString()))
+                        {
+                            Task<string> fileUrl = _base.UploadFileFirebase(file, file.FileName);
+                            saveTasks.Add(fileUrl);
+                        }
+                    }
+                }
+                string[] listImgUrl = await Task.WhenAll(saveTasks);
+                if (listImgUrl.Length > 0)
+                {
+                    var _rs = await _dlCharity.SaveVerifiedImage(string.Join(", ", listImgUrl), message, charityId);
+                    if (_rs > 0)
+                    {
+                        result.Ok(_rs);
+                    }
+                    else
+                    {
+                        result.BadRequest(new List<string> { "Có lỗi xảy ra, vui lòng thử lại" });
+                    }
+                }
+                else
+                {
+                    result.BadRequest(new List<string> { "Có lỗi xảy ra trong quá trình upload file, vui lòng thử lại" });
+                }
+                return result;
+            }
+            catch (Exception e)
+            {
+                result.InternalServer(new List<string> { e.Message });
+                return result;
+            }
         }
     }
 }

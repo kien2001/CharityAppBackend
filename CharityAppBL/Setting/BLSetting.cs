@@ -156,31 +156,31 @@ namespace CharityAppBL.Setting
         /// <param name="avatarKey"></param>
         /// <returns>Link image</returns>
         /// <exception cref="Exception"></exception>
-        private async Task<string> SaveAndGetAvatar(string avatarKey)
-        {
-            string avatarUrl = string.Empty;
-            if (String.IsNullOrEmpty(avatarKey))
-            {
-                return avatarUrl;
-            }
-            try
-            {
-                var memoryStreamAvatarObj = _dlBase.GetDataRedis<FileSave>(avatarKey);
-                if (memoryStreamAvatarObj != null)
-                {
-                    var memoryStreamAvatar = new MemoryStream(memoryStreamAvatarObj.Data);
-                    avatarUrl = await _dlBase.UploadFileFirebase(memoryStreamAvatar, memoryStreamAvatarObj.FileName);
+        //private async Task<string> SaveAndGetAvatar(string avatarKey)
+        //{
+        //    string avatarUrl = string.Empty;
+        //    if (String.IsNullOrEmpty(avatarKey))
+        //    {
+        //        return avatarUrl;
+        //    }
+        //    try
+        //    {
+        //        var memoryStreamAvatarObj = _dlBase.GetDataRedis<FileSave>(avatarKey);
+        //        if (memoryStreamAvatarObj != null)
+        //        {
+        //            var memoryStreamAvatar = new MemoryStream(memoryStreamAvatarObj.Data);
+        //            avatarUrl = await _dlBase.UploadFileFirebase(memoryStreamAvatar, memoryStreamAvatarObj.FileName);
 
-                }
+        //        }
 
-                return avatarUrl;
-            }
-            catch (Exception e)
-            {
-                throw new Exception(e.Message);
-            }
+        //        return avatarUrl;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        throw new Exception(e.Message);
+        //    }
             
-        }
+        //}
 
         private (bool, string) CheckExistPassword(int id, string password, string newPassword)
         {

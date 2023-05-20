@@ -3,6 +3,7 @@ using CharityAppBO.Charity;
 using CharityAppBO.Users;
 using CharityBackendDL;
 using Dapper;
+using Firebase.Auth;
 using Login;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
@@ -77,6 +78,51 @@ namespace CharityAppDL.Charity
             }
             catch (MySqlException ex)
             {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                mySqlConnection.Close();
+            }
+        }
+
+        public async Task<int> SaveVerifiedImage(string urlImg, string message, int charityId)
+        {
+            using MySqlConnection mySqlConnection = new(DatabaseContext.ConnectionString);
+            mySqlConnection.Open();
+            using MySqlTransaction mySqlTransaction = mySqlConnection.BeginTransaction();
+            try
+            {
+                string query = "INSERT INTO charity_process_verify (CharityId,MessageToAdmin) VALUES (@charityId, @message) ON DUPLICATE KEY UPDATE MessageToAdmin = @message;";
+                var dynamicParam = new DynamicParameters();
+                dynamicParam.Add("@charityId", charityId);
+                dynamicParam.Add("@message", message);
+
+                string query1 = "update charities set charityFile = @urlImg, IsVerified = 1 where Id = @charityId;";
+                var dynamicParam1 = new DynamicParameters();
+                dynamicParam1.Add("@urlImg", urlImg);
+                dynamicParam1.Add("@charityId", charityId);
+
+
+                var _rsVerify = mySqlConnection.ExecuteAsync(query, dynamicParam, mySqlTransaction);
+                var _rsImg = mySqlConnection.ExecuteAsync(query1, dynamicParam1, mySqlTransaction);
+
+                await Task.WhenAll(_rsImg, _rsVerify);
+
+                if(_rsVerify.Result > 0 && _rsImg.Result > 0)
+                {
+                    mySqlTransaction.Commit();
+                    return 1;
+                }
+                else
+                {
+                    mySqlTransaction.Rollback();
+                    return 0;
+                }
+            }
+            catch (MySqlException ex)
+            {
+                mySqlTransaction.Rollback();
                 throw new Exception(ex.Message);
             }
             finally

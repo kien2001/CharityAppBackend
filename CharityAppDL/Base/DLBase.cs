@@ -5,6 +5,7 @@ using Dapper;
 using Firebase.Auth;
 using Firebase.Storage;
 using Login;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using MySqlConnector;
@@ -203,8 +204,11 @@ namespace Base
             }
         }
 
-        public async Task<string> UploadFileFirebase(MemoryStream memoryStream, string fileName)
+        public async Task<string> UploadFileFirebase(IFormFile file, string fileName)
         {
+            using var memoryStream = new MemoryStream();
+            await file.CopyToAsync(memoryStream);
+            memoryStream.Position = 0;
             var auth = new FirebaseAuthProvider(new FirebaseConfig(ApiKey));
             var a = await auth.SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword);
 

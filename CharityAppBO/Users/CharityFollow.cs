@@ -17,7 +17,7 @@ namespace CharityAppBO.Users
 
         public string IsFollow { get; set; } // người dùng có theo dõi chưa
 
-        public bool IsVerified { get; set; }   // tổ chức đã xác thực chưa:     (True or False)
+        public int IsVerified { get; set; }   // tổ chức đã xác thực chưa:     (True or False)
         public string CharityBanner { get; set; }
     }
 }

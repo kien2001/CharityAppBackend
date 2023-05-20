@@ -1,4 +1,5 @@
 ﻿using ActionResult;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +13,7 @@ namespace CharityAppBL.Charity
         ReturnResult GetAllCharities(int? userId);
 
         ReturnResult GetCharityById(int charityId, int? userId);
+
+        Task<ReturnResult> SaveVerifiedImage(List<IFormFile> files, string message, int charityId);
     }
 }

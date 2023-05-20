@@ -41,10 +41,7 @@ namespace CharityAppBL.Upload
                     // ảnh -> lưu vào cache
                     if (ContentTypeImage.Contains(formFile.Headers.ContentType.ToString()))
                     {
-                        using var stream = new MemoryStream();
-                        await formFile.CopyToAsync(stream);
-                        stream.Position = 0;
-                        string fileUrl = await _base.UploadFileFirebase(stream, formFile.FileName);
+                        string fileUrl = await _base.UploadFileFirebase(formFile, formFile.FileName);
                         result.Ok(fileUrl);
                     }
                 }

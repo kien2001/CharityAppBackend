@@ -46,7 +46,7 @@ namespace CharityAppBO.Charity
 
         public string CharityWebsite { get; set; } = string.Empty;
 
-        public bool IsVerified { get; set; }
+        public int IsVerified { get; set; }
 
         public bool IsFollow { get; set; }
 

@@ -13,7 +13,7 @@ namespace CharityAppDL.Charity
     {
         List<CharityFollow> GetAllCharities(int? userId);
 
-
+        Task<int> SaveVerifiedImage(string urlImg, string message, int charityId);
         CharityObj GetCharityById(int charityId, int? userId);
 
     }
