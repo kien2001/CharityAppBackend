@@ -19,12 +19,12 @@ namespace Controllers
     public class AccountController : ControllerBase
     {
 
-        private readonly IBLAccount _bLUser;
+        private readonly IBLAccount _bLAccount;
 
 
         public AccountController(IBLAccount bLUser)
         {
-            _bLUser = bLUser;
+            _bLAccount = bLUser;
         }
 
 
@@ -50,7 +50,7 @@ namespace Controllers
         public IActionResult GetCurrentUser()
         {
             var id = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var result = _bLUser.GetUser(id);
+            var result = _bLAccount.GetUser(id);
             if(result.IsSuccess)
             {
                 return Ok(result);
@@ -80,7 +80,7 @@ namespace Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public IActionResult GetAllUser()
         {
-            var result = _bLUser.GetAllUser();
+            var result = _bLAccount.GetAllUser();
             if (result.IsSuccess)
             {
                 return Ok(result);
@@ -104,13 +104,13 @@ namespace Controllers
         /// <response code="400">If no user</response>
         /// <response code="403">User does not have permission</response>
         [HttpPost("change-verify")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public IActionResult ChangeStatusVerify(VerifyStatus verifyStatus)
         {
-            var result = _bLUser.ChangeStatusVerify(verifyStatus);
+            var result = _bLAccount.ChangeStatusVerify(verifyStatus);
             if (result.IsSuccess)
             {
                 return Ok(result);
@@ -141,7 +141,7 @@ namespace Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public IActionResult ChangeStatus(UpdateStatusUser updateStatusUser)
         {
-            var result = _bLUser.ChangeStatus(updateStatusUser);
+            var result = _bLAccount.ChangeStatus(updateStatusUser);
             if (result.IsSuccess)
             {
                 return Ok(result);
@@ -149,23 +149,15 @@ namespace Controllers
             return BadRequest(result);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(int id, User user)
+        [HttpGet("verified-list")]
+        public IActionResult GetAllVerifiedList()
         {
-            //using IDbConnection db = new MySqlConnection(_connectionString);
-
-            //var existingUser = await db.QuerySingleOrDefaultAsync<User>("SELECT * FROM Users WHERE Id = @Id", new { Id = id });
-
-            //if (existingUser == null)
-            //{
-            //    return NotFound();
-            //}
-
-            //var sql = @"UPDATE Users SET Name = @Name, Email = @Email, Password = @Password WHERE Id = @Id;";
-
-            //await db.ExecuteAsync(sql, new { Id = id, Name = user.Name, Email = user.Email, Password = user.Password });
-
-            return NoContent();
+            var result = _bLAccount.GetAllVerifiedList();
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
 
         [HttpDelete("{id}")]

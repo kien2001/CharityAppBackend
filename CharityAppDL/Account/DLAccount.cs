@@ -1,4 +1,5 @@
-﻿using CharityBackendDL;
+﻿using CharityAppBO.Account;
+using CharityBackendDL;
 using Dapper;
 using MySqlConnector;
 using System;
@@ -111,6 +112,26 @@ namespace CharityAppDL.User
                 }
 
                 int result = mySqlConnection.Execute(query, dynamicParameters);
+                return result;
+            }
+            catch (MySqlException ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                mySqlConnection.Close();
+            }
+        }
+
+        public List<VerifyCharity> GetAllStatusVerify()
+        {
+            using MySqlConnection mySqlConnection = new(DatabaseContext.ConnectionString);
+            mySqlConnection.Open();
+            try
+            {
+                string query = "SELECT cpv.MessageToAdmin, cpv.CharityId, c.CharityFile, ua.Name as CharityName FROM charity_process_verify cpv LEFT JOIN charities c ON cpv.CharityId = c.Id JOIN user_account ua ON c.Id = ua.CharityId;";
+                var result = mySqlConnection.Query<VerifyCharity>(query).ToList();
                 return result;
             }
             catch (MySqlException ex)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CharityAppBO.Account;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,6 +16,8 @@ namespace CharityAppDL.User
         int UpdateStatusUser(int id, bool status);
 
         int ChangeStatusVerify(int charityId, bool isAccepted, string? message);
+
+        List<VerifyCharity> GetAllStatusVerify();
 
     }
 }

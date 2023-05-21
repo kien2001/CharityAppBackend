@@ -18,6 +18,6 @@ namespace CharityAppBL.Users
         ReturnResult ChangeStatus(UpdateStatusUser updateStatusUser);
         ReturnResult ChangeStatusVerify(VerifyStatus verifyStatus);
 
-
+        ReturnResult GetAllVerifiedList();
     }
 }

@@ -13,9 +13,9 @@ namespace CharityAppBL.Users
 {
     public class BLAccount : IBLAccount
     {
-        private IDLAccount _dLUser;
+        private IDLAccount _dLAccount;
         public BLAccount(IDLAccount dLUser) {
-            _dLUser = dLUser;
+            _dLAccount = dLUser;
         }
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace CharityAppBL.Users
         public ReturnResult GetUser(int id)
         {
             var result = new ReturnResult();
-            var (user, numFollow, numCampaign) = _dLUser.GetUser(id);
+            var (user, numFollow, numCampaign) = _dLAccount.GetUser(id);
             if (user != null)
             {
                 var roleId = user?.RoleId;
@@ -60,7 +60,7 @@ namespace CharityAppBL.Users
         {
             var result = new ReturnResult();
             var objReturn = new List<object>();
-            var listUser = _dLUser.GetAllUser();
+            var listUser = _dLAccount.GetAllUser();
             if (listUser != null && listUser.Count > 0)
             {
                 foreach (var user in listUser)
@@ -88,7 +88,7 @@ namespace CharityAppBL.Users
         public ReturnResult ChangeStatus(UpdateStatusUser updateStatusUser)
         {
             var returnResult = new ReturnResult();
-            var result = _dLUser.UpdateStatusUser(updateStatusUser.Id, updateStatusUser.Status);
+            var result = _dLAccount.UpdateStatusUser(updateStatusUser.Id, updateStatusUser.Status);
             if (result > 0)
             {
                 returnResult.Ok(result);
@@ -106,11 +106,11 @@ namespace CharityAppBL.Users
             {
                 if (verifyStatus.IsAccepted)
                 {
-                    _rs = _dLUser.ChangeStatusVerify(verifyStatus.CharityId, verifyStatus.IsAccepted, null);
+                    _rs = _dLAccount.ChangeStatusVerify(verifyStatus.CharityId, verifyStatus.IsAccepted, null);
                 }
                 else
                 {
-                    _rs = _dLUser.ChangeStatusVerify(verifyStatus.CharityId, verifyStatus.IsAccepted, verifyStatus.Message);
+                    _rs = _dLAccount.ChangeStatusVerify(verifyStatus.CharityId, verifyStatus.IsAccepted, verifyStatus.Message);
                 }
                 if (_rs > 0)
                 {
@@ -127,6 +127,29 @@ namespace CharityAppBL.Users
             }
            
             return result;
+        }
+
+        public ReturnResult GetAllVerifiedList()
+        {
+            var result = new ReturnResult();
+            try
+            {
+                var _rs = _dLAccount.GetAllStatusVerify();
+                if (_rs != null && _rs.Count > 0)
+                {
+                    result.Ok(_rs);
+                }
+                else
+                {
+                    result.BadRequest(new List<string>() { "Co loi xay ra" });
+                }
+            }
+            catch (Exception e)
+            {
+                result.InternalServer(new List<string> { e.Message });
+            }
+            return result;
+            
         }
     }
 }
