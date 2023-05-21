@@ -12,5 +12,7 @@ namespace CharityAppDL.Users
         List<CharityFollow> GetFollowCharities(int userId);
 
         int ChangeStatusFollow(StatusFollow statusFollow);
+
+        List<Campaign> GetTopCampaign();
     }
 }

@@ -13,5 +13,7 @@ namespace CharityAppBL.Users
         ReturnResult GetFollowCharities(int userId);
 
         ReturnResult ChangeStatusFollow(StatusFollow statusFollow);
+
+        ReturnResult GetTopCampaign();
     }
 }

@@ -54,7 +54,7 @@ namespace CharityAppBO.Setting
 
         public string CharityDescription { get; set; } = string.Empty;
 
-        public string CharityFile { get; set; } = string.Empty;
+        //public string CharityFile { get; set; } = string.Empty;
 
         public string CharityFacebook { get; set; } = string.Empty;
 

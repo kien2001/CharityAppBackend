@@ -53,5 +53,21 @@ namespace CharityAppBL.Users
             }
             return result;
         }
+
+        public ReturnResult GetTopCampaign()
+        {
+            var result = new ReturnResult();
+            try
+            {
+                var listCharities = _dlUser.GetTopCampaign();
+                result.Ok(listCharities);
+            }
+            catch (Exception e)
+            {
+                result.InternalServer(new List<string> { e.Message });
+            }
+            return result;
+        }
+
     }
 }

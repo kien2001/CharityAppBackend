@@ -33,5 +33,13 @@ namespace CharityAppBackend.Controllers
             var result = _blUser.ChangeStatusFollow(statusFollow);
             return Ok(result);
         }
+
+        [HttpGet("top-compaign")]
+        //[Authorize(Roles = "UserNormal")]
+        public IActionResult GetTopCampaign()
+        {
+            var result = _blUser.GetTopCampaign();
+            return Ok(result);
+        }
     }
 }

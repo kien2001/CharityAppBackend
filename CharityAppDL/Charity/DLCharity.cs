@@ -86,7 +86,7 @@ namespace CharityAppDL.Charity
             }
         }
 
-        public async Task<int> SaveVerifiedImage(string urlImg, string message, int charityId)
+        public int SaveVerifiedImage(string urlImg, string message, int charityId)
         {
             using MySqlConnection mySqlConnection = new(DatabaseContext.ConnectionString);
             mySqlConnection.Open();
@@ -104,12 +104,10 @@ namespace CharityAppDL.Charity
                 dynamicParam1.Add("@charityId", charityId);
 
 
-                var _rsVerify = mySqlConnection.ExecuteAsync(query, dynamicParam, mySqlTransaction);
-                var _rsImg = mySqlConnection.ExecuteAsync(query1, dynamicParam1, mySqlTransaction);
+                var _rsVerify = mySqlConnection.Execute(query, dynamicParam, mySqlTransaction);
+                var _rsImg = mySqlConnection.Execute(query1, dynamicParam1, mySqlTransaction);
 
-                await Task.WhenAll(_rsImg, _rsVerify);
-
-                if(_rsVerify.Result > 0 && _rsImg.Result > 0)
+                if(_rsVerify > 0 && _rsImg > 0)
                 {
                     mySqlTransaction.Commit();
                     return 1;

@@ -69,5 +69,11 @@ namespace CharityAppDL.Users
                 mySqlConnection.Close();
             }
         }
+
+        
+        public List<Campaign> GetTopCampaign()
+        {
+            return null;
+        }
     }
 }
