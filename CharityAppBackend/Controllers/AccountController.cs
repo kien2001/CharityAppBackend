@@ -89,14 +89,16 @@ namespace Controllers
         }
 
         /// <summary>
-        /// Get all users(only Admin role).
+        /// Thay đỏi trạng  thái xác minh của tổ chức (xác minh hay ko), nếu đồng ý thì ko truyền Message, huỷ bỏ thì truyền
         /// </summary>
         /// <remarks>
         /// Sample request:
         ///
-        ///     Get http://localhost:8080/user/all
+        ///     Post http://localhost:8080/account/change-verify
         ///     {
-        ///        
+        ///         CharityId : 1
+        ///         IsAccepted : true
+        ///         Message : "Okela"
         ///     }
         ///
         /// </remarks>
@@ -124,7 +126,7 @@ namespace Controllers
         /// <remarks>
         /// Sample request:
         ///
-        ///     Post http://localhost:8080/user/change-status
+        ///     Post http://localhost:8080/account/change-status
         ///     {
         ///        id: 1,
         ///        status: true
@@ -149,7 +151,26 @@ namespace Controllers
             return BadRequest(result);
         }
 
+        /// <summary>
+        /// Lấy danh sách các tổ chức cần duyệt xác minh
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     Get http://localhost:8080/account/verified-list
+        ///     {
+        ///       
+        ///     }
+        ///
+        /// </remarks>
+        /// <response code="200">Returns 1</response>
+        /// <response code="400">If can not update</response>
+        /// <response code="403">User does not have permission</response>
         [HttpGet("verified-list")]
+        [Authorize(Roles = "Admin")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public IActionResult GetAllVerifiedList()
         {
             var result = _bLAccount.GetAllVerifiedList();
