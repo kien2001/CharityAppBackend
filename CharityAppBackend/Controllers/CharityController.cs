@@ -58,7 +58,7 @@ namespace CharityAppBackend.Controllers
         }
 
         [HttpPost("UploadVerification/{charityId}")]
-        public async Task<IActionResult> UploadVerification(List<IFormFile> files, string message, int charityId)
+        public async Task<IActionResult> UploadVerification(List<IFormFile> files,[FromForm] string message, int charityId)
         {
             var result = await _blCharity.SaveVerifiedImage(files, message, charityId);
 
