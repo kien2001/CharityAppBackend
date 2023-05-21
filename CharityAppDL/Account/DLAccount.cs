@@ -86,5 +86,41 @@ namespace CharityAppDL.User
                 mySqlConnection.Close();
             }
         }
+
+        public int ChangeStatusVerify(int charityId, bool isAccepted, string? message)
+        {
+            using MySqlConnection mySqlConnection = new(DatabaseContext.ConnectionString);
+            mySqlConnection.Open();
+            try
+            {
+                string query = string.Empty;
+                DynamicParameters dynamicParameters = new();
+
+                if (isAccepted)
+                {
+                    // cho phep => thay doi isverified, xoa row trong bang verify
+                    query = "delete from charity_process_verify where CharityId = @charityId;update charities set IsVerified = 2 where Id = @charityId";
+                    dynamicParameters.Add("@charityId", charityId);
+                }
+                else
+                {
+                    // tu choi => update message vao bang verify, update isverified = 0, xoa charityFile
+                    query = "update charity_process_verify set MessageToCharity = @message where CharityId = @charityId;update charities set IsVerified = 0, CharityFile = NULL where Id = @charityId";
+                    dynamicParameters.Add("@charityId", charityId);
+                    dynamicParameters.Add("@message", message);
+                }
+
+                int result = mySqlConnection.Execute(query, dynamicParameters);
+                return result;
+            }
+            catch (MySqlException ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                mySqlConnection.Close();
+            }
+        }
     }
 }

@@ -97,5 +97,36 @@ namespace CharityAppBL.Users
             returnResult.BadRequest(new List<string>() { "Không thể update" });
             return returnResult;
         }
+
+        public ReturnResult ChangeStatusVerify(VerifyStatus verifyStatus)
+        {
+            var result = new ReturnResult();
+            var _rs = 0;
+            try
+            {
+                if (verifyStatus.IsAccepted)
+                {
+                    _rs = _dLUser.ChangeStatusVerify(verifyStatus.CharityId, verifyStatus.IsAccepted, null);
+                }
+                else
+                {
+                    _rs = _dLUser.ChangeStatusVerify(verifyStatus.CharityId, verifyStatus.IsAccepted, verifyStatus.Message);
+                }
+                if (_rs > 0)
+                {
+                    result.Ok(_rs);
+                }
+                else
+                {
+                    result.BadRequest(new List<string>() { "Có lỗi xảy ra, vui lòng thử lại" });
+                }
+            }
+            catch (Exception e)
+            {
+                result.InternalServer(new List<string>() { e.Message });
+            }
+           
+            return result;
+        }
     }
 }

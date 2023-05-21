@@ -1,4 +1,5 @@
 ﻿using ActionResult;
+using CharityAppBO.Account;
 using CharityAppBO.Users;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,7 @@ namespace CharityAppBL.Users
         ReturnResult GetAllUser();
 
         ReturnResult ChangeStatus(UpdateStatusUser updateStatusUser);
+        ReturnResult ChangeStatusVerify(VerifyStatus verifyStatus);
 
 
     }

@@ -14,5 +14,7 @@ namespace CharityAppDL.User
 
         int UpdateStatusUser(int id, bool status);
 
+        int ChangeStatusVerify(int charityId, bool isAccepted, string? message);
+
     }
 }

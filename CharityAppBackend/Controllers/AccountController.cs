@@ -1,5 +1,6 @@
 ﻿using CharityAppBL.Login;
 using CharityAppBL.Users;
+using CharityAppBO.Account;
 using CharityAppBO.Users;
 using Login;
 using Microsoft.AspNetCore.Authorization;
@@ -80,6 +81,36 @@ namespace Controllers
         public IActionResult GetAllUser()
         {
             var result = _bLUser.GetAllUser();
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        /// <summary>
+        /// Get all users(only Admin role).
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     Get http://localhost:8080/user/all
+        ///     {
+        ///        
+        ///     }
+        ///
+        /// </remarks>
+        /// <response code="200">Returns all users</response>
+        /// <response code="400">If no user</response>
+        /// <response code="403">User does not have permission</response>
+        [HttpPost("change-verify")]
+        [Authorize(Roles = "Admin")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        public IActionResult ChangeStatusVerify(VerifyStatus verifyStatus)
+        {
+            var result = _bLUser.ChangeStatusVerify(verifyStatus);
             if (result.IsSuccess)
             {
                 return Ok(result);

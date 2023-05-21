@@ -62,7 +62,7 @@ namespace CharityAppBL.Setting
             {
                 List<Task<string>> saveTasks = new List<Task<string>>();
                 List<string> ContentTypeImage = new() { "image/jpeg", "image/png" };
-                if(files.Count > 0)
+                if(files != null && files.Count > 0)
                 {
                     foreach (var file in files)
                     {
