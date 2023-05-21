@@ -82,7 +82,7 @@ namespace CharityAppBL.Setting
                 {
                     userCharityUpdate.CharityInfo.CharityImages = string.IsNullOrEmpty(userCharityUpdate.CharityInfo.CharityImages) ? string.Join(", ", listImgUrl) : string.Concat(userCharityUpdate.CharityInfo.CharityImages, ", ", string.Join(", ", listImgUrl));
                 }
-                int _rs = await _DLSetting.UpdateCharityInfo(id, userCharityUpdate);
+                int _rs = _DLSetting.UpdateCharityInfo(id, userCharityUpdate);
                 if (_rs > 0)
                 {
                     result.Ok(_rs);

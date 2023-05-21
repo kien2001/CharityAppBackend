@@ -97,7 +97,7 @@ namespace CharityAppBL.Charity
                 string[] listImgUrl = await Task.WhenAll(saveTasks);
                 if (listImgUrl.Length > 0)
                 {
-                    var _rs = await _dlCharity.SaveVerifiedImage(string.Join(", ", listImgUrl), message, charityId);
+                    var _rs =  _dlCharity.SaveVerifiedImage(string.Join(", ", listImgUrl), message, charityId);
                     if (_rs > 0)
                     {
                         result.Ok(_rs);

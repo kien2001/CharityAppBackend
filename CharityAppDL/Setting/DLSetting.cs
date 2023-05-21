@@ -49,7 +49,7 @@ namespace CharityAppDL.Setting
             return Update(tableName, updateColumns, whereCondition);
         }
 
-        public async Task<int> UpdateCharityInfo(int id, UserCharityUpdate userCharityUpdate)
+        public int UpdateCharityInfo(int id, UserCharityUpdate userCharityUpdate)
         {
             using MySqlConnection mySqlConnection = new(DatabaseContext.ConnectionString);
             mySqlConnection.Open();
@@ -66,11 +66,10 @@ namespace CharityAppDL.Setting
 
                 string queryUser = GenerateQuery(id, "user_account", userAccount, ref dynamicParameter1);
 
-                var result = mySqlConnection.ExecuteAsync(queryCharity, dynamicParameters, mySqlTransaction);
-                var result1 = mySqlConnection.ExecuteAsync(queryUser, dynamicParameter1, mySqlTransaction);
+                var result = mySqlConnection.Execute(queryCharity, dynamicParameters, mySqlTransaction);
+                var result1 = mySqlConnection.Execute(queryUser, dynamicParameter1, mySqlTransaction);
 
-                await Task.WhenAll(result, result1);
-                if (result1.Result == 0)
+                if (result1 == 0)
                 {
                     mySqlTransaction.Rollback();
                 }
@@ -79,7 +78,7 @@ namespace CharityAppDL.Setting
                     mySqlTransaction.Commit();
                 }
 
-                return result1.Result;
+                return result1;
             }
             catch (MySqlException ex)
             {

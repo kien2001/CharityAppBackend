@@ -15,7 +15,7 @@ namespace CharityAppDL.Setting
         int UpdateInfo(string tableName, Dictionary<string, string> updateColumns, Dictionary<string, OperatorWhere> whereCondition);
 
         int UpdateCharityPassword(int id, string newPassword);
-        Task<int> UpdateCharityInfo(int id, UserCharityUpdate userCharityUpdate);
+        int UpdateCharityInfo(int id, UserCharityUpdate userCharityUpdate);
 
     }
 }
