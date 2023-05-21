@@ -44,9 +44,9 @@ namespace CharityAppBackend.Controllers
 
         [HttpPut("user-charity/edit-info/{id}")]
         //[Authorize(Roles = "UserCharity")]
-        public async Task<IActionResult> UpdateCharityInfo(int id, [FromBody] UserCharityUpdate userCharityUpdate)
+        public async Task<IActionResult> UpdateCharityInfo(int id,[FromForm] UserCharityUpdate userCharityUpdate)
         {
-            var result = await _bLSetting.UpdateCharityInfo(id, userCharityUpdate);
+            var result = await _bLSetting.UpdateCharityInfo(userCharityUpdate.Files, id, userCharityUpdate);
             
             if (result.IsSuccess)
             {

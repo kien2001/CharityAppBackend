@@ -2,6 +2,7 @@
 using Base;
 using CharityAppBO.Setting;
 using CharityAppDL.Setting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -54,13 +55,34 @@ namespace CharityAppBL.Setting
         /// <param name="id"></param>
         /// <param name="userCharityUpdate"></param>
         /// <returns></returns>
-        public async Task<ReturnResult> UpdateCharityInfo(int id, UserCharityUpdate userCharityUpdate)
+        public async Task<ReturnResult> UpdateCharityInfo(List<IFormFile> files, int id, UserCharityUpdate userCharityUpdate)
         {
             var result = new ReturnResult();
             try
             {
-               
-                int _rs = _DLSetting.UpdateCharityInfo(id, userCharityUpdate);
+                List<Task<string>> saveTasks = new List<Task<string>>();
+                List<string> ContentTypeImage = new() { "image/jpeg", "image/png" };
+                if(files.Count > 0)
+                {
+                    foreach (var file in files)
+                    {
+                        if (file.Length < 2097152)
+                        {
+                            // xử lý file nhỏ
+                            if (ContentTypeImage.Contains(file.Headers.ContentType.ToString()))
+                            {
+                                Task<string> fileUrl = _dlBase.UploadFileFirebase(file, file.FileName);
+                                saveTasks.Add(fileUrl);
+                            }
+                        }
+                    }
+                }
+                string[] listImgUrl = await Task.WhenAll(saveTasks);
+                if(listImgUrl.Length > 0)
+                {
+                    userCharityUpdate.CharityInfo.CharityImages = string.IsNullOrEmpty(userCharityUpdate.CharityInfo.CharityImages) ? string.Join(", ", listImgUrl) : string.Concat(userCharityUpdate.CharityInfo.CharityImages, ", ", string.Join(", ", listImgUrl));
+                }
+                int _rs = await _DLSetting.UpdateCharityInfo(id, userCharityUpdate);
                 if (_rs > 0)
                 {
                     result.Ok(_rs);
