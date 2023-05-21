@@ -12,5 +12,7 @@ namespace CharityAppBO.Charity
         public string CharityFile { get; set; }
         public string MessageToAdmin { get; set; }
 
+        public int IsVerified { get; set; }
+
     }
 }

@@ -92,7 +92,7 @@ namespace CharityAppDL.Charity
             mySqlConnection.Open();
             try
             {
-                string query = "SELECT c.Id as CharityId, c.CharityFile, cpv.MessageToAdmin FROM charities c JOIN charity_process_verify cpv ON c.Id = cpv.CharityId WHERE c.Id = @charityId AND c.IsVerified = 1 limit 1;";
+                string query = "SELECT c.Id as CharityId, c.CharityFile, cpv.MessageToAdmin, c.IsVerified FROM charities c JOIN charity_process_verify cpv ON c.Id = cpv.CharityId WHERE c.Id = @charityId AND c.IsVerified = 1 limit 1;";
                 DynamicParameters dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@charityId", charityId);
                 var charityVerify = mySqlConnection.Query<CharityVerify>(query, dynamicParameters).FirstOrDefault();
