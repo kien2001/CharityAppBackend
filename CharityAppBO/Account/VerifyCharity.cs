@@ -10,6 +10,9 @@ namespace CharityAppBO.Account
     {
         public int CharityId { get; set; }
         public string CharityName { get; set; }
+
+        public string CharityName { get; set; }
+
         public int IsVerified { get; set; }
         public string CharityFile { get; set; }
     }

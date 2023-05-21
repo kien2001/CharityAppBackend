@@ -130,7 +130,7 @@ namespace CharityAppDL.User
             mySqlConnection.Open();
             try
             {
-                string query = "SELECT cpv.MessageToAdmin, cpv.CharityId, c.CharityFile, ua.Name as CharityName FROM charity_process_verify cpv LEFT JOIN charities c ON cpv.CharityId = c.Id JOIN user_account ua ON c.Id = ua.CharityId;";
+                string query = "SELECT cpv.MessageToAdmin, c.IsVerified, cpv.CharityId, c.CharityFile, ua.Name as CharityName FROM charity_process_verify cpv LEFT JOIN charities c ON cpv.CharityId = c.Id JOIN user_account ua ON c.Id = ua.CharityId where c.IsVerified = 1;";
                 var result = mySqlConnection.Query<VerifyCharity>(query).ToList();
                 return result;
             }
