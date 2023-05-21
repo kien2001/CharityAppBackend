@@ -64,5 +64,13 @@ namespace CharityAppBackend.Controllers
 
             return Ok(result);
         }
+
+        [HttpGet("UploadVerification/{charityId}")]
+        public IActionResult GetUploadVerification(int charityId)
+        {
+            var result = _blCharity.GetVerifiedImage(charityId);
+
+            return Ok(result);
+        }
     }
 }

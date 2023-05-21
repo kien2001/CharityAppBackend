@@ -86,6 +86,28 @@ namespace CharityAppDL.Charity
             }
         }
 
+        public CharityVerify? GetVerifiedImage(int charityId)
+        {
+            using MySqlConnection mySqlConnection = new(DatabaseContext.ConnectionString);
+            mySqlConnection.Open();
+            try
+            {
+                string query = "SELECT c.Id as CharityId, c.CharityFile, cpv.MessageToAdmin FROM charities c JOIN charity_process_verify cpv ON c.Id = cpv.CharityId WHERE c.Id = @charityId AND c.IsVerified = 1 limit 1;";
+                DynamicParameters dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@charityId", charityId);
+                var charityVerify = mySqlConnection.Query<CharityVerify>(query, dynamicParameters).FirstOrDefault();
+                return charityVerify;
+            }
+            catch (MySqlException ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                mySqlConnection.Close();
+            }
+        }
+
         public int SaveVerifiedImage(string urlImg, string message, int charityId)
         {
             using MySqlConnection mySqlConnection = new(DatabaseContext.ConnectionString);

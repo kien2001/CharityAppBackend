@@ -15,5 +15,7 @@ namespace CharityAppBL.Charity
         ReturnResult GetCharityById(int charityId, int? userId);
 
         Task<ReturnResult> SaveVerifiedImage(List<IFormFile> files, string message, int charityId);
+
+        ReturnResult GetVerifiedImage(int charityId);
     }
 }

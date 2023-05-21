@@ -75,6 +75,29 @@ namespace CharityAppBL.Charity
             return result;
         }
 
+        public ReturnResult GetVerifiedImage(int charityId)
+        {
+            var result = new ReturnResult();
+            try
+            {
+                var _rs = _dlCharity.GetVerifiedImage(charityId);
+                if (_rs != null)
+                {
+                    result.Ok(_rs);
+                }
+                else
+                {
+                    result.BadRequest(new List<string> { "Có lỗi xảy ra, vui lòng thử lại" });
+                }
+            }
+            catch (Exception e)
+            {
+                result.InternalServer(new List<string> { e.Message });
+            }
+            return result;
+           
+        }
+
         public async Task<ReturnResult> SaveVerifiedImage(List<IFormFile> files, string message, int charityId)
         {
             var result = new ReturnResult();

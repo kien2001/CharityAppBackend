@@ -43,7 +43,6 @@ namespace CharityAppBackend.Controllers
 
 
         [HttpPut("user-charity/edit-info/{id}")]
-        //[ValidateAntiForgeryToken]
         //[Authorize(Roles = "UserCharity")]
         public async Task<IActionResult> UpdateCharityInfo(int id,[FromForm] UserCharityUpdate userCharityUpdate)
         {

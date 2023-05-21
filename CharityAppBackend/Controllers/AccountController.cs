@@ -15,7 +15,7 @@ namespace Controllers
 {
     [Route("account")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class AccountController : ControllerBase
     {
 
@@ -104,7 +104,7 @@ namespace Controllers
         /// <response code="400">If no user</response>
         /// <response code="403">User does not have permission</response>
         [HttpPost("change-verify")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]

@@ -165,6 +165,8 @@ builder.Services.AddAuthorization(options =>
     }
 });
 builder.Services.AddSingleton(tokenValidationParameters);
+builder.Services.AddControllers(
+    options => options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true);
 builder.Services.AddSession(o =>
 {
     o.IdleTimeout = TimeSpan.FromSeconds(300);// 5p

@@ -16,5 +16,7 @@ namespace CharityAppDL.Charity
         int SaveVerifiedImage(string urlImg, string message, int charityId);
         CharityObj GetCharityById(int charityId, int? userId);
 
+        CharityVerify? GetVerifiedImage(int charityId);
+
     }
 }

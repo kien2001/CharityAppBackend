@@ -55,7 +55,7 @@ namespace CharityAppBL.Setting
         /// <param name="id"></param>
         /// <param name="userCharityUpdate"></param>
         /// <returns></returns>
-        public async Task<ReturnResult> UpdateCharityInfo(List<IFormFile> files, int id, UserCharityUpdate userCharityUpdate)
+        public async Task<ReturnResult> UpdateCharityInfo(List<IFormFile>? files, int id, UserCharityUpdate userCharityUpdate)
         {
             var result = new ReturnResult();
             try
@@ -91,13 +91,12 @@ namespace CharityAppBL.Setting
                 {
                     result.BadRequest(new List<string>() { "Update khong thanh cong" });
                 }
-                return result;
             }
             catch (Exception e)
             {
                 result.InternalServer(new List<string>() { e.Message });
-                return result;
             }
+            return result;
         }
 
         /// <summary>
