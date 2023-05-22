@@ -100,7 +100,7 @@ namespace CharityAppDL.User
                 if (isAccepted)
                 {
                     // cho phep => thay doi isverified, xoa row trong bang verify
-                    query = "delete from charity_process_verify where CharityId = @charityId;update charities set IsVerified = 2 where Id = @charityId";
+                    query = "update charities set IsVerified = 2 where Id = @charityId";
                     dynamicParameters.Add("@charityId", charityId);
                 }
                 else

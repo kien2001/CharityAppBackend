@@ -2,6 +2,7 @@
 using CharityAppBO.Users;
 using CharityBackendDL;
 using Dapper;
+using Login;
 using MySqlConnector;
 using System;
 using System.Collections.Generic;
@@ -74,6 +75,11 @@ namespace CharityAppDL.Users
         public List<Campaign> GetTopCampaign()
         {
             return null;
+        }
+
+        public List<UserCharityReturn> GetTopCharity()
+        {
+            throw new NotImplementedException();
         }
     }
 }

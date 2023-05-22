@@ -69,5 +69,19 @@ namespace CharityAppBL.Users
             return result;
         }
 
+        public ReturnResult GetTopCharity()
+        {
+            var result = new ReturnResult();
+            try
+            {
+                var listCharities = _dlUser.GetTopCharity();
+                result.Ok(listCharities);
+            }
+            catch (Exception e)
+            {
+                result.InternalServer(new List<string> { e.Message });
+            }
+            return result;
+        }
     }
 }

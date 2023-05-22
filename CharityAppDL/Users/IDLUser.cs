@@ -1,4 +1,5 @@
 ﻿using CharityAppBO.Users;
+using Login;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,5 +15,7 @@ namespace CharityAppDL.Users
         int ChangeStatusFollow(StatusFollow statusFollow);
 
         List<Campaign> GetTopCampaign();
+
+        List<UserCharityReturn> GetTopCharity();
     }
 }

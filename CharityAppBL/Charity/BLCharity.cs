@@ -87,7 +87,7 @@ namespace CharityAppBL.Charity
                 }
                 else
                 {
-                    result.BadRequest(new List<string> { "Có lỗi xảy ra, vui lòng thử lại" });
+                    result.BadRequest(new List<string> { "Tổ chức chưa gửi tài liệu xác minh" });
                 }
             }
             catch (Exception e)

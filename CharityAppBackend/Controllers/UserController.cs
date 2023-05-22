@@ -41,5 +41,13 @@ namespace CharityAppBackend.Controllers
             var result = _blUser.GetTopCampaign();
             return Ok(result);
         }
+
+        [HttpGet("top-charity")]
+        //[Authorize(Roles = "UserNormal")]
+        public IActionResult GetTopCharity()
+        {
+            var result = _blUser.GetTopCharity();
+            return Ok(result);
+        }
     }
 }

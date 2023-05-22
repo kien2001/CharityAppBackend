@@ -15,5 +15,7 @@ namespace CharityAppBL.Users
         ReturnResult ChangeStatusFollow(StatusFollow statusFollow);
 
         ReturnResult GetTopCampaign();
+
+        ReturnResult GetTopCharity();
     }
 }
