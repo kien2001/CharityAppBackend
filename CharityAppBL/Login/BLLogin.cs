@@ -39,8 +39,8 @@ namespace CharityAppBL.Login
                     result.BadRequest(new List<string> { "Tên đăng nhập hoặc mật khẩu sai, vui lòng thử lại" });
                     return result;
                 }
-                bool? isLocked = userLogin.IsLocked != null ? bool.Parse(userLogin.IsLocked) : null;
-                if (isLocked == null || isLocked == true)
+                var isLocked = userLogin?.IsLocked;
+                if (Convert.ToBoolean(isLocked))
                 {
                     result.BadRequest(new List<string> { "Tài khoản này đã bị khoá, vui lòng liên hệ Admin để được giải quyết." });
                     return result;
