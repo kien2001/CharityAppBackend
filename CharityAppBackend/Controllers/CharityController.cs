@@ -19,11 +19,13 @@ namespace CharityAppBackend.Controllers
     {
         private IBLCharity _blCharity;
         private IBLAccount _blAccount;
+        private IBLUser _blUser;
 
-        public CharityController(IBLCharity iBLCharity, IBLAccount ibLAccount)
+        public CharityController(IBLCharity iBLCharity, IBLAccount ibLAccount, IBLUser blUser)
         {
             _blCharity = iBLCharity;
             _blAccount = ibLAccount;
+            _blUser = blUser;
         }
         // GET: api/<ChairityController>
         [HttpGet("all")]
@@ -41,6 +43,14 @@ namespace CharityAppBackend.Controllers
             }
             return Ok(result);
         }
+
+        [HttpGet("top-charity")]
+        public IActionResult GetTopCharity()
+        {
+            var result = _blUser.GetTopCharity();
+            return Ok(result);
+        }
+
         [HttpGet("{charityId}")]
         public IActionResult GetCharity(int charityId)
         {

@@ -77,9 +77,25 @@ namespace CharityAppDL.Users
             return null;
         }
 
-        public List<UserCharityReturn> GetTopCharity()
+        public List<TopCharity> GetTopCharity()
         {
-            throw new NotImplementedException();
+            using MySqlConnection mySqlConnection = new(DatabaseContext.ConnectionString);
+            mySqlConnection.Open();
+            try
+            {
+                string query = "SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));SELECT c.*, ua.Name AS CharityName, ua.PhoneNumber, ua.Address, ua.Email, t.NumberCampaign FROM (SELECT ci.organization_id, COUNT(ci.organization_id) AS NumberCampaign FROM campaign_info ci GROUP BY ci.organization_id ORDER BY NumberCampaign DESC LIMIT 3) AS t JOIN charities c ON c.Id = t.organization_id JOIN user_account ua ON ua.CharityId = c.Id;";
+               
+                var listCharities = mySqlConnection.Query<TopCharity>(query).ToList();
+                return listCharities;
+            }
+            catch (MySqlException ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                mySqlConnection.Close();
+            }
         }
     }
 }

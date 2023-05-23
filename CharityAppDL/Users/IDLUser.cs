@@ -16,6 +16,6 @@ namespace CharityAppDL.Users
 
         List<Campaign> GetTopCampaign();
 
-        List<UserCharityReturn> GetTopCharity();
+        List<TopCharity> GetTopCharity();
     }
 }
