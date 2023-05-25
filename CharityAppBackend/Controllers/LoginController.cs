@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using ActionResult;
 using Auth;
+using Base;
 using CharityAppBL.Login;
 using CharityAppBO.Login;
 using Login;
@@ -15,10 +16,12 @@ namespace Controllers
     public class LoginController : ControllerBase
     {
         IBLLogin _blLogin;
+        IDLBase _dlBase;
 
-        public LoginController(IBLLogin bLLogin)
+        public LoginController(IBLLogin bLLogin, IDLBase dLBase)
         {
             _blLogin = bLLogin;
+            _dlBase = dLBase;
         }
 
         [HttpPost]
@@ -53,14 +56,14 @@ namespace Controllers
         public IActionResult ResetPassword(ResetPassword resetPassword)
         {
             var result = new ReturnResult();
-            var checkResetCode = HttpContext.Session.GetString("CheckResetCode");
+            var checkResetCode = _dlBase.GetDataRedis<string>($"{resetPassword.Id}_CheckResetCode");
             if(checkResetCode != null )
             {
                 var isSuccess = bool.Parse(checkResetCode);
                 if(isSuccess)
                 {
                     result = _blLogin.ResetPassword(resetPassword);
-                    HttpContext.Session.SetString("CheckResetCode", "false");
+                    _dlBase.SaveDataRedis($"{resetPassword.Id}_CheckResetCode", "false", null);
                     return Ok(result);    
                     
                 }
@@ -78,12 +81,12 @@ namespace Controllers
             var result = _blLogin.ResetCode(resetCode);
             if (result.IsSuccess)
             {
-                HttpContext.Session.SetString("CheckResetCode", "true");
+                _dlBase.SaveDataRedis($"{resetCode.Id}_CheckResetCode", "true", null);
                 return Ok(result);
             }
             else
             {
-                HttpContext.Session.SetString("CheckResetCode", "false");
+                _dlBase.SaveDataRedis($"{resetCode.Id}_CheckResetCode", "false", null);
                 return BadRequest(result);
             }
         }

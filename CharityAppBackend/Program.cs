@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -167,10 +168,7 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddSingleton(tokenValidationParameters);
 builder.Services.AddControllers(
     options => options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true);
-builder.Services.AddSession(o =>
-{
-    o.IdleTimeout = TimeSpan.FromSeconds(300);// 5p
-});
+
 
 builder.Services.AddStackExchangeRedisCache(options =>
 {
@@ -195,7 +193,6 @@ app.UseCors(MyAllowSpecificOrigins);
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseSession();
 //app.UseEndpoints(endpoints =>
 //{
 //    endpoints.MapControllers();
